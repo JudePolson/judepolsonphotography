@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Slide {
+  image?: ImageMetadata;
+  title: string;
+}
+
+interface Props {
+  slides: Slide[];
+  tagline: string;
+}
+
+const { slides, tagline } = Astro.props;
+const withImages = slides.filter((s) => s.image);
+---
+
+<section class="hero" aria-label="Featured photographs">
+  <div class="frames">
+    {
+      withImages.length === 0 ? (
+        <div class="frame is-active placeholder">
+          <p class="label">
+            Hero photographs go here — mark up to five photos
+            <code>featured: true</code>
+          </p>
+        </div>
+      ) : (
+        withImages.map((slide, i) => (
+          <div class:list={['frame', { 'is-active': i === 0 }]} data-slide={i}>
+            <Image
+              src={slide.image!}
+              alt={slide.title}
+              widths={[800, 1400, 2000, 2600]}
+              sizes="100vw"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+            />
+          </div>
+        ))
+      )
+    }
+  </div>
+
+  <div class="scrim"></div>
+
+  {tagline && <p class="tagline">{tagline}</p>}
+
+  <a class="scroll-cue label" href="#stories">Scroll</a>
+</section>
+
+<script>
+  const hero = document.querySelector('.hero .frames');
+  if (hero) {
+    const frames = Array.from(hero.querySelectorAll<HTMLElement>('.frame'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (frames.length > 1 && !reduce) {
+      let i = 0;
+      setInterval(() => {
+        frames[i].classList.remove('is-active');
+        i = (i + 1) % frames.length;
+        frames[i].classList.add('is-active');
+      }, 5200);
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    height: min(92svh, 60rem);
+    min-height: 26rem;
+    overflow: hidden;
+    background: var(--c-surface-2);
+  }
+
+  .frames,
+  .frame {
+    position: absolute;
+    inset: 0;
+  }
+
+  .frame {
+    opacity: 0;
+    transition: opacity var(--dur-cross) var(--ease);
+  }
+
+  .frame.is-active { opacity: 1; }
+
+  .frame :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: grid;
+    place-items: center;
+    padding: var(--gutter);
+    text-align: center;
+  }
+
+  .placeholder code {
+    display: inline-block;
+    margin-left: var(--s-2);
+    color: var(--c-accent);
+  }
+
+  /* Keeps the wordmark and tagline legible over any photograph. */
+  .scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 11, 12, 0.35) 0%,
+      rgba(11, 11, 12, 0) 35%,
+      rgba(11, 11, 12, 0.55) 100%
+    );
+    pointer-events: none;
+  }
+
+  .tagline {
+    position: absolute;
+    z-index: 2;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: var(--s-8);
+    margin: 0;
+    max-width: 26ch;
+    font-family: var(--f-display);
+    font-size: clamp(var(--t-2), 4.4vw, var(--t-4));
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tr-tight);
+    text-wrap: balance;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    z-index: 2;
+    right: var(--gutter);
+    bottom: var(--s-5);
+    color: var(--c-ink-soft);
+  }
+
+  .scroll-cue:hover { color: var(--c-accent); }
+</style>

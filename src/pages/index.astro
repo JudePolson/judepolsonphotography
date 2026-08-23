@@ -1,0 +1,74 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import HeroSlideshow from '../components/HeroSlideshow.astro';
+import StoryBand from '../components/StoryBand.astro';
+import site from '../data/site.json';
+
+// Up to five featured photographs rotate through the hero.
+const featured = (await getCollection('photos', (p) => p.data.published && p.data.featured))
+  .sort((a, b) => a.data.heroOrder - b.data.heroOrder)
+  .slice(0, 5);
+
+const stories = (await getCollection('stories', (s) => s.data.published)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+// Each story names a photo by its filename; look it up rather than duplicating the file.
+const allPhotos = await getCollection('photos');
+const byId = new Map(allPhotos.map((p) => [p.id, p]));
+
+const rendered = await Promise.all(
+  stories.map(async (story) => {
+    const photo = byId.get(story.data.photo);
+    if (!photo) {
+      throw new Error(
+        `Story "${story.id}" points at photo "${story.data.photo}", which doesn't exist in src/content/photos/.`
+      );
+    }
+    return { story, photo, Content: (await render(story)).Content };
+  })
+);
+---
+
+<Base isHome overlayHeader>
+  <HeroSlideshow
+    slides={featured.map((p) => ({ image: p.data.image, title: p.data.title }))}
+    tagline={site.tagline}
+  />
+
+  <div id="stories">
+    {
+      rendered.map(({ story, photo, Content }, i) => (
+        <StoryBand
+          title={story.data.title}
+          image={photo.data.image}
+          imageAlt={photo.data.title}
+          flip={i % 2 === 1}
+        >
+          <Content />
+        </StoryBand>
+      ))
+    }
+  </div>
+
+  <section class="cta">
+    <a href="/gallery">See the whole gallery &rarr;</a>
+  </section>
+</Base>
+
+<style>
+  .cta {
+    border-top: 1px solid var(--c-hairline);
+    padding: var(--s-8) var(--gutter);
+    text-align: center;
+  }
+
+  .cta a {
+    font-family: var(--f-display);
+    font-size: clamp(var(--t-2), 3.6vw, var(--t-3));
+    letter-spacing: var(--tr-tight);
+  }
+
+  .cta a:hover { color: var(--c-accent); }
+</style>

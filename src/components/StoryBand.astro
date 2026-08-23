@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  title: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+  /** Odd-numbered bands put the photograph on the right instead. */
+  flip?: boolean;
+}
+
+const { title, image, imageAlt = '', flip = false } = Astro.props;
+---
+
+<section class:list={['band', { flip }]}>
+  <div class="pane pane-image">
+    {
+      image ? (
+        <Image
+          src={image}
+          alt={imageAlt || title}
+          widths={[600, 1000, 1500]}
+          sizes="(max-width: 900px) 100vw, 50vw"
+          loading="lazy"
+        />
+      ) : (
+        <span class="placeholder label">Photograph goes here</span>
+      )
+    }
+  </div>
+
+  <div class="pane pane-text">
+    <div class="text-inner">
+      <h2>{title}</h2>
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .band {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  @media (min-width: 900px) {
+    .band { grid-template-columns: 1fr 1fr; }
+    .band.flip .pane-image { order: 2; }
+  }
+
+  .pane-image {
+    background: var(--c-surface-2);
+    min-height: 22rem;
+  }
+
+  .pane-image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    min-height: 22rem;
+  }
+
+  .pane-text {
+    display: grid;
+    align-content: center;
+    padding: var(--s-8) var(--gutter);
+  }
+
+  .text-inner { max-width: var(--w-prose); }
+
+  .pane-text .prose {
+    margin-top: var(--s-5);
+    color: var(--c-ink-soft);
+  }
+</style>

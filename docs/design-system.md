@@ -1,0 +1,72 @@
+# Design system
+
+## The one rule
+
+Every color, size, space, and typeface comes from `src/styles/tokens.css`. If
+you need a value that isn't there, add it to the tokens file and document it
+here. Never inline a raw value in a component. Three people editing with three
+agents is exactly how a site ends up with nine shades of the same grey.
+
+## Why it's dark
+
+Near-black ground, minimal chrome, photographs doing all the talking. Nature
+and wildlife photographs read the way prints do on a gallery wall, and it's
+the shared instinct of both sites Jude picked as references
+(simondentremont.com, mattshannon.ca).
+
+**There is no light mode.** Inverting the ground would wreck the photographs.
+This is a deliberate commitment, not an omission.
+
+## Tokens
+
+| Group  | Tokens                                                                |
+| ------ | --------------------------------------------------------------------- |
+| Color  | `--c-ground` `--c-surface` `--c-surface-2` `--c-ink` `--c-ink-soft` `--c-ink-faint` `--c-hairline` `--c-accent` `--c-scrim` |
+| Type   | `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
+| Space  | `--s-1` → `--s-9`, 4px base                                           |
+| Layout | `--w-prose` `--w-page` `--gutter`                                     |
+| Motion | `--ease` `--dur` `--dur-cross`                                        |
+
+`--c-accent` (warm sand) is the only non-neutral in the system. It appears on
+links, hover, and focus — nowhere else. Spending it in more places is how the
+restraint breaks.
+
+## Components
+
+| Component            | Used by            | What it does                                        |
+| -------------------- | ------------------ | --------------------------------------------------- |
+| `SiteHeader.astro`   | every page         | Wordmark top-left, nav top-right. `overlay` makes it sit transparently over the hero. |
+| `SiteFooter.astro`   | every page         | Copyright and inquiry link.                          |
+| `HeroSlideshow.astro`| home               | Crossfades up to five featured photographs, 5.2s each. Holds on the first frame if the visitor prefers reduced motion. |
+| `StoryBand.astro`    | home               | Half photograph, half writing. Alternates sides.     |
+| `PhotoGallery.astro` | gallery            | Square thumbnail mosaic (a `large` photo takes a 2x2 tile); click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
+
+Check this table before building anything new — the thing you want may exist.
+
+## Type
+
+Instrument Serif for the wordmark and headings; Instrument Sans for everything
+else. Uppercase labels get `--tr-wide` letter-spacing and nothing else does.
+Running text stays inside `--w-prose`.
+
+## Accessibility floor
+
+Every photograph needs real alt text — `title` supplies it, so titles have to
+describe, not just name. Focus is always visible. The lightbox is a real
+`<dialog>`, so Escape and Tab behave. `prefers-reduced-motion` stops the hero
+rotating.
+
+## Open decisions
+
+Chosen before we had Jude's photographs in hand. Revisit once the galleries
+are real:
+
+- **The accent.** Warm sand `#C9A97A` is a guess. It should relate to Jude's
+  actual work.
+- **The type pairing.** Instrument Serif/Sans is a good default, not a
+  considered response to his pictures.
+- **Thumbnail shape.** Square crops are safe. If Jude's work is mostly
+  landscape-orientation wildlife, a masonry layout preserving aspect ratio may
+  serve it better.
+- **Tagline treatment.** Currently over the hero, bottom-left. Worth testing
+  against a quieter placement once real photographs are behind it.

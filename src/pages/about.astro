@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const entry = await getEntry('pages', 'about');
+if (!entry) throw new Error('Missing src/content/pages/about.md');
+const { Content } = await render(entry);
+---
+
+<Base title={entry.data.title} description={entry.data.description}>
+  <section class="about shell">
+    <div class="portrait">
+      {
+        entry.data.portrait ? (
+          <Image
+            src={entry.data.portrait}
+            alt={entry.data.portraitAlt || 'Jude Polson'}
+            widths={[420, 700, 1000]}
+            sizes="(max-width: 800px) 100vw, 38vw"
+          />
+        ) : (
+          <span class="ph label">A photograph of Jude goes here</span>
+        )
+      }
+    </div>
+
+    <div class="words">
+      <h1>{entry.data.title}</h1>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about {
+    padding-block: var(--s-8);
+    display: grid;
+    gap: var(--s-7);
+    align-items: start;
+  }
+
+  @media (min-width: 800px) {
+    .about {
+      grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+      gap: var(--s-8);
+    }
+  }
+
+  .portrait {
+    background: var(--c-surface-2);
+    aspect-ratio: 4 / 5;
+  }
+
+  .portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ph { display: grid; place-items: center; height: 100%; text-align: center; padding: var(--s-4); }
+
+  .words .prose { margin-top: var(--s-5); color: var(--c-ink-soft); }
+</style>

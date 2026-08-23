@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# cloudflare
+.wrangler/
+
+# secrets — never commit these
+.env
+.env.*
+*.token
+.ghtok
+
+# os / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# logs
+*.log
+npm-debug.log*

@@ -1,0 +1,31 @@
+---
+import site from '../data/site.json';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell inner">
+    <p class="label">&copy; {year} {site.name}</p>
+    <p class="label">
+      <a href="/contact">Inquiries</a>
+      {site.instagram && <> &middot; <a href={site.instagram} rel="me noopener">Instagram</a></>}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--c-hairline);
+    margin-top: var(--s-9);
+    padding-block: var(--s-6);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-5);
+  }
+
+  .site-footer a:hover { color: var(--c-ink); }
+</style>

@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PhotoGallery from '../components/PhotoGallery.astro';
+
+const photos = (await getCollection('photos', (p) => p.data.published)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<Base title="Gallery" description="Photographs by Jude Polson.">
+  <section class="shell head">
+    <h1>Gallery</h1>
+    <p class="lede">Click any photograph to see it larger, with the story behind it.</p>
+  </section>
+
+  <section class="shell body">
+    <PhotoGallery
+      photos={photos.map((p) => ({
+        id: p.id,
+        title: p.data.title,
+        description: p.data.description,
+        image: p.data.image,
+        place: p.data.place,
+        span: p.data.span,
+      }))}
+    />
+  </section>
+</Base>
+
+<style>
+  .head { padding-block: var(--s-8) var(--s-5); }
+  .lede { color: var(--c-ink-soft); margin-top: var(--s-4); max-width: 44ch; }
+  .body { padding-bottom: var(--s-8); }
+</style>

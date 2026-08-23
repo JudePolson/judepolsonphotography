@@ -1,0 +1,82 @@
+---
+import site from '../data/site.json';
+
+interface Props {
+  /** Over-image headers sit transparently on top of the hero. */
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+const path = Astro.url.pathname;
+---
+
+<header class:list={['site-header', { overlay }]}>
+  <div class="inner">
+    <a class="wordmark" href="/">{site.wordmark}</a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          site.nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    padding-inline: var(--gutter);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--c-hairline);
+  }
+
+  /* Sits on top of the hero photographs rather than above them. */
+  .site-header.overlay {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 3;
+    border-bottom: none;
+    background: linear-gradient(to bottom, rgba(11, 11, 12, 0.55), transparent);
+    padding-bottom: var(--s-7);
+  }
+
+  .inner {
+    max-width: var(--w-page);
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+  }
+
+  .wordmark {
+    font-family: var(--f-display);
+    font-size: clamp(var(--t-1), 2.6vw, var(--t-2));
+    letter-spacing: var(--tr-tight);
+    color: var(--c-ink);
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--t--1);
+    letter-spacing: var(--tr-wide);
+    text-transform: uppercase;
+    color: var(--c-ink-soft);
+  }
+
+  nav a { transition: color var(--dur) var(--ease); }
+  nav a:hover,
+  nav a[aria-current='page'] { color: var(--c-accent); }
+</style>

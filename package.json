@@ -1,0 +1,22 @@
+{
+  "name": "judepolsonphotography",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "astro": "^7.2.4",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "playwright": "^1.62.1",
+    "wrangler": "^4.125.0"
+  }
+}

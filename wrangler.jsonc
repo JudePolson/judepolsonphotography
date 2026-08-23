@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers config. Static-assets-only Worker: no server code,
+  // Cloudflare serves the built site from the edge.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "judepolsonphotography",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

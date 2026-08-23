@@ -1,0 +1,292 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Photo {
+  id: string;
+  title: string;
+  description: string;
+  image?: ImageMetadata;
+  place?: string;
+  span: 'normal' | 'large';
+}
+
+interface Props {
+  photos: Photo[];
+}
+
+const { photos } = Astro.props;
+---
+
+<div class="gallery">
+  {
+    photos.length === 0 ? (
+      <p class="empty label">
+        No photographs yet. Add them in <code>src/content/photos/</code>.
+      </p>
+    ) : (
+      <ul class="grid">
+        {photos.map((photo, i) => (
+          <li class:list={['cell', { large: photo.span === 'large' }]}>
+            <button
+              type="button"
+              class="thumb"
+              data-index={i}
+              aria-label={`View ${photo.title} larger`}
+            >
+              {photo.image ? (
+                <Image
+                  src={photo.image}
+                  alt={photo.title}
+                  widths={[320, 560, 880]}
+                  sizes="(max-width: 600px) 45vw, (max-width: 1100px) 30vw, 22vw"
+                  loading={i < 8 ? 'eager' : 'lazy'}
+                />
+              ) : (
+                <span class="ph label">{photo.title}</span>
+              )}
+            </button>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</div>
+
+<dialog class="lightbox" aria-label="Photograph detail">
+  <div class="lb-inner">
+    <button type="button" class="lb-close" aria-label="Close">&times;</button>
+
+    <figure class="lb-figure">
+      <div class="lb-imagewrap"><img class="lb-image" alt="" /></div>
+      <figcaption class="lb-caption">
+        <h2 class="lb-title"></h2>
+        <p class="lb-place label"></p>
+        <p class="lb-description"></p>
+      </figcaption>
+    </figure>
+
+    <div class="lb-controls">
+      <button type="button" class="lb-prev">&larr; Previous</button>
+      <span class="lb-count label"></span>
+      <button type="button" class="lb-next">Next &rarr;</button>
+    </div>
+  </div>
+</dialog>
+
+<script define:vars={{ photos }}>
+  const dialog = document.querySelector('.lightbox');
+  const thumbs = Array.from(document.querySelectorAll('.thumb'));
+  if (dialog && thumbs.length) {
+    const imgEl = dialog.querySelector('.lb-image');
+    const titleEl = dialog.querySelector('.lb-title');
+    const placeEl = dialog.querySelector('.lb-place');
+    const descEl = dialog.querySelector('.lb-description');
+    const countEl = dialog.querySelector('.lb-count');
+    let current = 0;
+
+    // Full-size sources, harvested from what Astro emitted for each thumbnail.
+    const sources = thumbs.map((btn) => {
+      const img = btn.querySelector('img');
+      if (!img) return null;
+      const set = img.getAttribute('srcset');
+      if (!set) return img.getAttribute('src');
+      const last = set.split(',').pop();
+      return last ? last.trim().split(/\s+/)[0] : img.getAttribute('src');
+    });
+
+    function show(i) {
+      current = (i + photos.length) % photos.length;
+      const p = photos[current];
+      const src = sources[current];
+      if (src) {
+        imgEl.setAttribute('src', src);
+        imgEl.setAttribute('alt', p.title);
+        imgEl.style.display = '';
+      } else {
+        imgEl.removeAttribute('src');
+        imgEl.style.display = 'none';
+      }
+      titleEl.textContent = p.title;
+      placeEl.textContent = p.place || '';
+      placeEl.style.display = p.place ? '' : 'none';
+      descEl.textContent = p.description;
+      countEl.textContent = `${current + 1} / ${photos.length}`;
+    }
+
+    thumbs.forEach((btn, i) =>
+      btn.addEventListener('click', () => {
+        show(i);
+        dialog.showModal();
+      })
+    );
+
+    dialog.querySelector('.lb-close').addEventListener('click', () => dialog.close());
+    dialog.querySelector('.lb-prev').addEventListener('click', () => show(current - 1));
+    dialog.querySelector('.lb-next').addEventListener('click', () => show(current + 1));
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
+    });
+
+    // Click the backdrop to dismiss.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+</script>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(11rem, 42vw), 1fr));
+    gap: var(--s-3);
+    /* dense packing so a large tile never leaves a hole behind it */
+    grid-auto-flow: dense;
+  }
+
+  .cell { margin: 0; }
+
+  /* A large tile is 2x2 — square, like every other tile, so the mosaic
+     tessellates exactly. Spanning columns only would leave gaps. */
+  .cell.large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  @media (max-width: 30rem) {
+    .cell.large { grid-column: span 2; grid-row: span 2; }
+  }
+
+  .thumb {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--c-surface-2);
+    cursor: pointer;
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  }
+
+  .thumb:hover :global(img) { transform: scale(1.04); opacity: 0.85; }
+
+  .ph {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: var(--s-3);
+    text-align: center;
+    font-size: 0.7rem;
+  }
+
+  .empty {
+    border: 1px dashed var(--c-hairline);
+    padding: var(--s-8) var(--s-5);
+    text-align: center;
+  }
+  .empty code { color: var(--c-accent); }
+
+  /* --- lightbox --------------------------------------------------------- */
+
+  .lightbox {
+    border: 0;
+    padding: 0;
+    max-width: min(96vw, 1500px);
+    max-height: 94svh;
+    background: var(--c-surface);
+    color: var(--c-ink);
+    overflow: hidden;
+  }
+
+  .lightbox::backdrop { background: rgba(6, 6, 7, 0.9); }
+
+  .lb-inner {
+    position: relative;
+    max-height: 94svh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .lb-close {
+    position: absolute;
+    top: var(--s-2);
+    right: var(--s-3);
+    z-index: 2;
+    background: none;
+    border: 0;
+    color: var(--c-ink-soft);
+    font-size: var(--t-3);
+    line-height: 1;
+    cursor: pointer;
+  }
+  .lb-close:hover { color: var(--c-ink); }
+
+  .lb-figure {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 880px) {
+    .lb-figure { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); }
+  }
+
+  .lb-imagewrap {
+    background: var(--c-ground);
+    display: grid;
+    place-items: center;
+    min-height: 14rem;
+    max-height: min(68svh, 900px);
+  }
+
+  .lb-image {
+    max-width: 100%;
+    max-height: min(68svh, 900px);
+    object-fit: contain;
+  }
+
+  .lb-caption { padding: var(--s-6) var(--s-6) var(--s-5); }
+
+  .lb-title { font-size: var(--t-2); }
+
+  .lb-place { margin: var(--s-2) 0 0; }
+
+  .lb-description {
+    margin-top: var(--s-4);
+    color: var(--c-ink-soft);
+  }
+
+  .lb-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-6) var(--s-5);
+    border-top: 1px solid var(--c-hairline);
+  }
+
+  .lb-controls button {
+    background: none;
+    border: 0;
+    color: var(--c-ink-soft);
+    font-family: var(--f-body);
+    font-size: var(--t--1);
+    letter-spacing: var(--tr-wide);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .lb-controls button:hover { color: var(--c-accent); }
+</style>

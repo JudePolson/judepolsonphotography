@@ -1,0 +1,28 @@
+{
+  "name": "Jude Polson Photography",
+  "wordmark": "Jude Polson Photography",
+  "photographerFirstName": "Jude",
+  "tagline": "Wild animals, mostly birds.",
+  "description": "Wildlife photographs by Jude Polson, a thirteen-year-old photographer working in Alaska and the Pacific Northwest.",
+  "location": "Alaska and the Pacific Northwest",
+  "instagram": "",
+  "contact": {
+    "_note": "Jude is 13. Every inquiry must land in a parent-monitored inbox. See docs/content-model.md, 'Privacy rules'.",
+    "email": "PLACEHOLDER@judepolsonphotography.com",
+    "displayName": "Peter Polson (Jude's dad)"
+  },
+  "nav": [
+    {
+      "label": "Gallery",
+      "href": "/gallery"
+    },
+    {
+      "label": "About Me",
+      "href": "/about"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact"
+    }
+  ]
+}

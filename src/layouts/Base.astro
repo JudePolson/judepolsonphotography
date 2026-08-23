@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set true on the home page so the <title> isn't "Home — Jude Polson". */
+  isHome?: boolean;
+  /** Home page only: let the header sit transparently over the hero. */
+  overlayHeader?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  isHome = false,
+  overlayHeader = false,
+} = Astro.props;
+const pageTitle = isHome || !title ? site.name : `${title} — ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+  </head>
+
+  <body class:list={{ 'has-overlay-header': overlayHeader }}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <SiteHeader overlay={overlayHeader} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
