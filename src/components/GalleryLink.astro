@@ -1,10 +1,10 @@
 ---
 /**
  * The link at the foot of the home page. Clicking it sends a small flock of
- * simple white birds up off the screen before the gallery loads.
+ * sketched birds fluttering up and away to the left before the gallery loads.
  *
- * The birds are decorative: they're aria-hidden, they never block the click,
- * and anyone who prefers reduced motion goes straight to the gallery with no
+ * The birds are decorative: aria-hidden, the layer never blocks a click, and
+ * anyone who prefers reduced motion goes straight to the gallery with no
  * animation at all.
  */
 ---
@@ -17,11 +17,27 @@
   const link = document.querySelector<HTMLAnchorElement>('a[data-flock]');
 
   if (link) {
-    const BIRDS = 9;
-    const FLIGHT = 1050; // ms — long enough to read, short enough not to nag
+    const BIRDS = 8;
+    const FLIGHT = 1150;
+
+    // Sketched bird, facing left: head and beak, compact body, soft tail,
+    // and two long swept wings that pivot at the shoulder (36, 34).
+    const BIRD_SVG = `
+<svg viewBox="0 0 104 72" width="70" height="48" fill="none" stroke="currentColor"
+     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M13 33 C 16 29, 21 28, 26 29.5 C 34 31, 44 32.5, 54 34
+           C 58 34.6, 58 37, 54 37.6 C 44 39, 34 39, 26 38 C 19 37, 14 35.5, 13 33 Z"/>
+  <path d="M13.5 32 L 7 32.6 L 13 35"/>
+  <circle cx="19" cy="32.4" r="1.05" fill="currentColor" stroke="none"/>
+  <path d="M55 34.6 C 64 32, 70 30, 76 27.5" stroke-width="1.5"/>
+  <path d="M55 37 C 63 37, 69 37.5, 75 38" stroke-width="1.5"/>
+  <g class="wing wing-u"><path d="M36 32 C 45 19, 59 8, 79 4"/>
+    <path d="M79 4 C 67 14, 55 24, 45 33" stroke-width="1.4"/></g>
+  <g class="wing wing-d"><path d="M36 37 C 45 49, 59 59, 79 63"/>
+    <path d="M79 63 C 67 53, 55 44, 45 36" stroke-width="1.4"/></g>
+</svg>`;
 
     link.addEventListener('click', (event) => {
-      // Let modified clicks (new tab, etc.) behave normally.
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -36,28 +52,26 @@
         const bird = document.createElement('span');
         bird.className = 'bird';
 
-        // Fan out from the link, then away up and to the sides.
-        const spread = (i / (BIRDS - 1) - 0.5) * 2;        // -1 → 1
-        const scale = 0.55 + ((i * 7) % 10) / 14;           // varied sizes
-        const driftX = spread * (140 + ((i * 37) % 120));
-        const riseY = -(320 + ((i * 53) % 260));
-        const delay = (i * 45) % 320;
-        const flap = 150 + ((i * 29) % 90);
+        const t = i / (BIRDS - 1);              // 0 → 1 across the flock
 
-        bird.style.setProperty('--x0', `${rect.left + rect.width / 2 + spread * 40}px`);
-        bird.style.setProperty('--y0', `${rect.top + rect.height / 2}px`);
+        // They lift off near the LEFT end of the words, not the middle.
+        const startX = rect.left + rect.width * 0.16 + ((i * 23) % 46) - 23;
+        const startY = rect.top + rect.height * 0.5 + ((i * 31) % 30) - 15;
+
+        // Up and away to the left.
+        const driftX = -(200 + t * 320 + ((i * 41) % 90));
+        const riseY = -(260 + t * 180 + ((i * 47) % 150));
+
+        bird.style.setProperty('--x0', `${startX}px`);
+        bird.style.setProperty('--y0', `${startY}px`);
         bird.style.setProperty('--dx', `${driftX}px`);
         bird.style.setProperty('--dy', `${riseY}px`);
-        bird.style.setProperty('--s', `${scale}`);
-        bird.style.setProperty('--d', `${delay}ms`);
-        bird.style.setProperty('--flap', `${flap}ms`);
+        bird.style.setProperty('--s', `${0.62 + ((i * 13) % 10) / 16}`);
+        bird.style.setProperty('--rot', `${-14 - ((i * 17) % 16)}deg`);
+        bird.style.setProperty('--d', `${(i * 55) % 340}ms`);
+        bird.style.setProperty('--flap', `${170 + ((i * 23) % 80)}ms`);
 
-        bird.innerHTML =
-          '<svg viewBox="0 0 40 14" width="40" height="14" fill="none" ' +
-          'stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
-          '<path d="M1 9 Q10 1 20 8" /><path d="M20 8 Q30 1 39 9" />' +
-          '</svg>';
-
+        bird.innerHTML = BIRD_SVG;
         layer.appendChild(bird);
       }
 
@@ -83,34 +97,47 @@
     left: 0;
     top: 0;
     color: #fff;
-    transform: translate3d(var(--x0), var(--y0), 0) scale(var(--s));
-    animation: bird-away 1000ms cubic-bezier(0.3, 0, 0.35, 1) var(--d) forwards;
+    animation: bird-away 1100ms cubic-bezier(0.28, 0, 0.3, 1) var(--d) forwards;
     will-change: transform, opacity;
   }
 
-  .flock-layer .bird svg {
-    display: block;
-    transform-origin: 50% 70%;
+  /* Wings pivot at the shoulder, in the SVG's own coordinates. */
+  .flock-layer .bird .wing {
+    transform-box: view-box;
+    transform-origin: 36px 34px;
     animation: bird-flap var(--flap) ease-in-out infinite alternate;
   }
 
+  .flock-layer .bird .wing-d { animation-delay: 18ms; }
+
   @keyframes bird-away {
-    0%   { opacity: 0; transform: translate3d(var(--x0), var(--y0), 0) scale(calc(var(--s) * 0.6)); }
-    12%  { opacity: 1; }
-    75%  { opacity: 1; }
+    0% {
+      opacity: 0;
+      transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--rot)) scale(calc(var(--s) * 0.7));
+    }
+    14% { opacity: 1; }
+    /* a small lift and hesitation, so it flutters rather than launches */
+    40% {
+      transform: translate3d(
+        calc(var(--x0) + var(--dx) * 0.34),
+        calc(var(--y0) + var(--dy) * 0.46),
+        0
+      ) rotate(calc(var(--rot) - 5deg)) scale(var(--s));
+    }
+    72% { opacity: 1; }
     100% {
       opacity: 0;
       transform: translate3d(
         calc(var(--x0) + var(--dx)),
         calc(var(--y0) + var(--dy)),
         0
-      ) scale(var(--s));
+      ) rotate(calc(var(--rot) - 10deg)) scale(calc(var(--s) * 0.9));
     }
   }
 
   @keyframes bird-flap {
-    from { transform: scaleY(1); }
-    to   { transform: scaleY(0.35); }
+    from { transform: rotate(-14deg); }
+    to   { transform: rotate(14deg); }
   }
 
   @media (prefers-reduced-motion: reduce) {
