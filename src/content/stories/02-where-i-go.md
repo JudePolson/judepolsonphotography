@@ -1,10 +1,6 @@
 ---
 title: "Where I go"
-photos:
-  - bald-eagle-on-rock
-  - harbor-seal
-  - humpback-fluke
-  - sea-otter
+photo: sea-otter
 edgeCode: "PORTRA 160"
 order: 20
 published: true

@@ -2,40 +2,30 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-interface Frame {
+interface Props {
   image: ImageMetadata;
   alt: string;
-}
-
-interface Props {
-  frames: Frame[];
-  /** Shown small and orange along the top edge, like a real film edge code. */
+  /** Shown small and orange along the edges, like a real film edge code. */
   edgeCode?: string;
 }
 
-const { frames, edgeCode = 'KODAK 400TX' } = Astro.props;
+const { image, alt, edgeCode = 'KODAK 400TX' } = Astro.props;
 ---
 
-<figure class="film" data-film>
+<figure class="film">
   <div class="edge edge-top">
     <span class="sprockets"></span>
     <span class="code">{edgeCode}</span>
   </div>
 
   <div class="window">
-    {
-      frames.map((frame, i) => (
-        <div class:list={['frame', { 'is-active': i === 0 }]}>
-          <Image
-            src={frame.image}
-            alt={i === 0 ? frame.alt : ''}
-            widths={[420, 700, 1000]}
-            sizes="(max-width: 900px) 90vw, 34vw"
-            loading="lazy"
-          />
-        </div>
-      ))
-    }
+    <Image
+      src={image}
+      alt={alt}
+      widths={[420, 700, 1000]}
+      sizes="(max-width: 900px) 90vw, 34vw"
+      loading="lazy"
+    />
   </div>
 
   <div class="edge edge-bottom">
@@ -43,25 +33,6 @@ const { frames, edgeCode = 'KODAK 400TX' } = Astro.props;
     <span class="code">25 &rarr; 25A</span>
   </div>
 </figure>
-
-<script>
-  for (const film of document.querySelectorAll<HTMLElement>('[data-film]')) {
-    const frames = Array.from(film.querySelectorAll<HTMLElement>('.frame'));
-    if (frames.length < 2) continue;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
-
-    let i = 0;
-    // Staggered so two strips on the same page never change together.
-    const offset = Array.from(document.querySelectorAll('[data-film]')).indexOf(film) * 1900;
-    window.setTimeout(() => {
-      window.setInterval(() => {
-        frames[i].classList.remove('is-active');
-        i = (i + 1) % frames.length;
-        frames[i].classList.add('is-active');
-      }, 4200);
-    }, offset);
-  }
-</script>
 
 <style>
   .film {
@@ -100,7 +71,10 @@ const { frames, edgeCode = 'KODAK 400TX' } = Astro.props;
     background-repeat: repeat-x;
   }
 
-  .edge-bottom .sprockets { inset: 0 0 0 5.5rem; background-position: right 0.55rem center; }
+  .edge-bottom .sprockets {
+    inset: 0 0 0 5.5rem;
+    background-position: right 0.55rem center;
+  }
 
   .code {
     position: relative;
@@ -117,7 +91,11 @@ const { frames, edgeCode = 'KODAK 400TX' } = Astro.props;
     white-space: nowrap;
   }
 
-  .edge-bottom .code { margin-left: 0.7rem; margin-right: auto; padding-right: 0; }
+  .edge-bottom .code {
+    margin-left: 0.7rem;
+    margin-right: auto;
+    padding-right: 0;
+  }
 
   .window {
     position: relative;
@@ -125,27 +103,14 @@ const { frames, edgeCode = 'KODAK 400TX' } = Astro.props;
     margin-inline: 0.55rem;
     background: #0a0908;
     overflow: hidden;
-    /* the thin lines between exposures on a real strip */
+    /* the thin line between exposures on a real strip */
     outline: 1px solid rgba(214, 207, 194, 0.16);
     outline-offset: 2px;
   }
 
-  .frame {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 1400ms cubic-bezier(0.4, 0, 0.3, 1);
-  }
-
-  .frame.is-active { opacity: 1; }
-
-  .frame :global(img) {
+  .window :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .frame { transition: none; }
   }
 </style>
