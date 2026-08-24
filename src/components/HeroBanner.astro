@@ -5,10 +5,16 @@ import type { ImageMetadata } from 'astro';
 interface Props {
   image?: ImageMetadata;
   alt: string;
-  tagline?: string;
+  /**
+   * Which part of the photograph stays visible in the banner. The frame is
+   * much wider than the photograph is tall, so something has to be cropped.
+   * A lower percentage shows more of the top of the photograph, which pushes
+   * the subject further down the frame. Set it in src/data/site.json.
+   */
+  position?: string;
 }
 
-const { image, alt, tagline } = Astro.props;
+const { image, alt, position = 'center 50%' } = Astro.props;
 ---
 
 <section class="banner" aria-label="Header photograph">
@@ -21,6 +27,7 @@ const { image, alt, tagline } = Astro.props;
         sizes="100vw"
         loading="eager"
         fetchpriority="high"
+        style={`object-position: ${position};`}
       />
     ) : (
       <span class="placeholder label">
@@ -28,9 +35,6 @@ const { image, alt, tagline } = Astro.props;
       </span>
     )
   }
-
-  <div class="scrim"></div>
-  {tagline && <p class="tagline">{tagline}</p>}
 </section>
 
 <style>
@@ -56,32 +60,4 @@ const { image, alt, tagline } = Astro.props;
   }
 
   .placeholder code { color: var(--c-accent); }
-
-  /* Keeps the tagline legible over any photograph. */
-  .scrim {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      rgba(11, 11, 12, 0) 45%,
-      rgba(11, 11, 12, 0.6) 100%
-    );
-  }
-
-  .tagline {
-    position: absolute;
-    z-index: 2;
-    left: var(--gutter);
-    right: var(--gutter);
-    bottom: var(--s-5);
-    margin: 0;
-    max-width: 26ch;
-    font-family: var(--f-display);
-    font-size: clamp(var(--t-2), 3.4vw, var(--t-3));
-    line-height: var(--lh-tight);
-    letter-spacing: var(--tr-tight);
-    text-wrap: balance;
-  }
 </style>

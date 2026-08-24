@@ -1,0 +1,179 @@
+---
+/**
+ * The link at the foot of the home page.
+ *
+ * When this section scrolls properly into view, a flock of sketched birds
+ * lifts off and flutters away up and to the left. No click required — it's
+ * a reward for reaching the bottom of the page.
+ *
+ * The birds are decorative: aria-hidden, the layer never blocks a click, and
+ * nothing happens at all for anyone who prefers reduced motion.
+ */
+---
+
+<section class="cta" data-flock-zone>
+  <a href="/gallery/" class="gallery-link">See the whole gallery &rarr;</a>
+</section>
+
+<script>
+  const zone = document.querySelector<HTMLElement>('[data-flock-zone]');
+
+  if (zone && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const BIRDS = 11;
+    const FLIGHT = 2600;
+
+    // Bird seen from behind: two tapered wings in a wide, shallow V.
+    const BIRD_SVG = `
+<svg viewBox="0 0 80 34" width="62" height="26" fill="none" stroke="currentColor"
+     stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path class="wing wl" d="M40 25 C 34 19, 24 12, 6 9 C 16 16, 28 21, 39 26 Z"/>
+  <path class="wing wr" d="M41 25 C 47 19, 57 12, 75 9 C 65 16, 53 21, 42 26 Z"/>
+</svg>`;
+
+    let flying = false;
+
+    function launch() {
+      if (flying) return;
+      flying = true;
+
+      const rect = zone.getBoundingClientRect();
+      const layer = document.createElement('div');
+      layer.className = 'flock-layer';
+      layer.setAttribute('aria-hidden', 'true');
+
+      const link = zone.querySelector('a');
+      const anchor = link ? link.getBoundingClientRect() : rect;
+
+      for (let i = 0; i < BIRDS; i++) {
+        const bird = document.createElement('span');
+        bird.className = 'bird';
+        const t = i / (BIRDS - 1);
+
+        // Lift off from near the left end of the words, loosely scattered.
+        const startX = anchor.left + anchor.width * 0.18 + ((i * 37) % 90) - 45;
+        const startY = anchor.top + anchor.height * 0.5 + ((i * 53) % 64) - 32;
+
+        // Up and away to the left, fanning as they go.
+        const driftX = -(240 + t * 420 + ((i * 43) % 140));
+        const riseY = -(300 + t * 240 + ((i * 61) % 200));
+
+        bird.style.setProperty('--x0', `${startX}px`);
+        bird.style.setProperty('--y0', `${startY}px`);
+        bird.style.setProperty('--dx', `${driftX}px`);
+        bird.style.setProperty('--dy', `${riseY}px`);
+        bird.style.setProperty('--s', `${0.55 + ((i * 17) % 12) / 15}`);
+        bird.style.setProperty('--rot', `${-6 - ((i * 11) % 14)}deg`);
+        bird.style.setProperty('--d', `${(i * 105) % 900}ms`);
+        bird.style.setProperty('--flap', `${230 + ((i * 37) % 130)}ms`);
+        // Each bird holds its wings a little differently, as in a real flock.
+        bird.style.setProperty('--wb', `${-10 + ((i * 29) % 22)}`);
+
+        bird.innerHTML = BIRD_SVG;
+        layer.appendChild(bird);
+      }
+
+      document.body.appendChild(layer);
+      window.setTimeout(() => layer.remove(), FLIGHT);
+    }
+
+    // Fires once the section is properly in view — not the moment it peeks in.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) launch();
+          // Re-arm once it's fully out of view, so it can happen again later.
+          if (!entry.isIntersecting) flying = false;
+        }
+      },
+      { threshold: [0, 0.6] }
+    );
+
+    io.observe(zone);
+  }
+</script>
+
+<style is:global>
+  .flock-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .flock-layer .bird {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #fff;
+    opacity: 0;
+    animation: bird-away 2500ms cubic-bezier(0.3, 0, 0.32, 1) var(--d) forwards;
+    will-change: transform, opacity;
+  }
+
+  /* Wings pivot at the shoulder, in the SVG's own coordinate space. */
+  .flock-layer .bird .wing {
+    transform-box: view-box;
+    transform-origin: 40px 25px;
+  }
+
+  .flock-layer .bird .wl {
+    animation: flap-l var(--flap) ease-in-out infinite alternate;
+  }
+  .flock-layer .bird .wr {
+    animation: flap-r var(--flap) ease-in-out infinite alternate;
+  }
+
+  @keyframes flap-l {
+    from { transform: rotate(calc((var(--wb) - 12) * 1deg)); }
+    to   { transform: rotate(calc((var(--wb) + 12) * 1deg)); }
+  }
+  @keyframes flap-r {
+    from { transform: rotate(calc((var(--wb) - 12) * -1deg)); }
+    to   { transform: rotate(calc((var(--wb) + 12) * -1deg)); }
+  }
+
+  @keyframes bird-away {
+    0% {
+      opacity: 0;
+      transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--rot)) scale(calc(var(--s) * 0.8));
+    }
+    10% { opacity: 1; }
+    45% {
+      transform: translate3d(
+        calc(var(--x0) + var(--dx) * 0.36),
+        calc(var(--y0) + var(--dy) * 0.44),
+        0
+      ) rotate(calc(var(--rot) - 4deg)) scale(var(--s));
+    }
+    78% { opacity: 1; }
+    100% {
+      opacity: 0;
+      transform: translate3d(
+        calc(var(--x0) + var(--dx)),
+        calc(var(--y0) + var(--dy)),
+        0
+      ) rotate(calc(var(--rot) - 9deg)) scale(calc(var(--s) * 0.92));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flock-layer { display: none; }
+  }
+</style>
+
+<style>
+  .cta {
+    border-top: 1px solid var(--c-hairline);
+    padding: var(--s-8) var(--gutter);
+    text-align: center;
+  }
+
+  .gallery-link {
+    font-family: var(--f-display);
+    font-size: clamp(var(--t-2), 3.6vw, var(--t-3));
+    letter-spacing: var(--tr-tight);
+  }
+
+  .gallery-link:hover { color: var(--c-accent); }
+</style>

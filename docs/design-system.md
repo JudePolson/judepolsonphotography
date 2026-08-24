@@ -17,12 +17,16 @@ the shared instinct of both sites Jude picked as references
 **There is no light mode.** Inverting the ground would wreck the photographs.
 This is a deliberate commitment, not an omission.
 
+The navigation bar is the deliberate exception: a white strip across the top,
+which reads as a gallery label above the work rather than part of it.
+
 ## Tokens
 
 | Group  | Tokens                                                                |
 | ------ | --------------------------------------------------------------------- |
 | Color  | `--c-ground` `--c-surface` `--c-surface-2` `--c-ink` `--c-ink-soft` `--c-ink-faint` `--c-hairline` `--c-accent` `--c-scrim` |
-| Type   | `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
+| Nav    | `--c-nav-bg` `--c-nav-ink` `--c-nav-soft` `--c-nav-accent` `--c-nav-line` — the white bar only |
+| Type   | `--f-wordmark` (Fraunces) `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
 | Space  | `--s-1` → `--s-9`, 4px base                                           |
 | Layout | `--w-prose` `--w-page` `--gutter`                                     |
 | Motion | `--ease` `--dur` `--dur-cross`                                        |
@@ -35,18 +39,23 @@ restraint breaks.
 
 | Component            | Used by            | What it does                                        |
 | -------------------- | ------------------ | --------------------------------------------------- |
-| `SiteHeader.astro`   | every page         | Wordmark top-left, nav top-right.                    |
+| `SiteHeader.astro`   | every page         | Wordmark top-left, nav top-right. **White bar** — the one light surface on the site, with its own `--c-nav-*` tokens because the dark-ground accent is too pale to read on white. |
 | `SiteFooter.astro`   | every page         | Copyright and inquiry link.                          |
-| `HeroBanner.astro`   | home               | One photograph as a banner across the top, with the tagline over it. Which photograph is set by `heroPhoto` in `src/data/site.json`. |
+| `HeroBanner.astro`   | home               | One photograph as a banner across the top, no text over it. Which photograph and how it's framed are `heroPhoto` and `heroPosition` in `src/data/site.json`. |
 | `StoryBand.astro`    | home               | Half photograph, half writing. Alternates sides.     |
-| `PhotoGallery.astro` | gallery            | Square thumbnail mosaic (a `large` photo takes a 2x2 tile); click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
+| `GalleryLink.astro`  | home               | The link at the foot of the home page. **On scroll, not on click** — when the section comes properly into view (60% visible), eleven sketched birds lift off and flutter up and away to the left. Seen from behind: two tapered wings in a wide, shallow V, each bird holding its wings a little differently. Decorative and `aria-hidden`; the layer is `pointer-events: none`, the link navigates normally with no delay, and nothing happens at all under reduced motion. Re-arms once the section leaves the viewport. |
+| `PhotoGallery.astro` | gallery            | Column layout that preserves every photograph's native aspect ratio — nothing is cropped to fit a tile. Click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
 
 Check this table before building anything new — the thing you want may exist.
 
 ## Type
 
-Instrument Serif for the wordmark and headings; Instrument Sans for everything
-else. Uppercase labels get `--tr-wide` letter-spacing and nothing else does.
+Fraunces for the wordmark, Instrument Serif for headings, Instrument Sans for
+everything else.
+
+The wordmark has its own token (`--f-wordmark`) on purpose: it's brand rather
+than typography, so it can be changed without disturbing a single heading on
+the site. Change that one line to try a different face. Uppercase labels get `--tr-wide` letter-spacing and nothing else does.
 Running text stays inside `--w-prose`.
 
 ## Accessibility floor
@@ -66,8 +75,5 @@ are real:
   actual work.
 - **The type pairing.** Instrument Serif/Sans is a good default, not a
   considered response to his pictures.
-- **Thumbnail shape.** Square crops are safe. If Jude's work is mostly
-  landscape-orientation wildlife, a masonry layout preserving aspect ratio may
-  serve it better.
 - **Tagline treatment.** Currently over the hero, bottom-left. Worth testing
   against a quieter placement once real photographs are behind it.

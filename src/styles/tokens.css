@@ -21,9 +21,20 @@
   --c-ink-faint:   #6E6B68;  /* metadata, disabled                      */
   --c-hairline:    #292A2E;  /* rules, borders                          */
   --c-accent:      #C9A97A;  /* links, focus, hover — warm, restrained  */
+
+  /* The navigation bar is the one light surface on the site. It needs its
+     own tokens because the dark-ground accent is too pale to read on white. */
+  --c-nav-bg:      #FFFFFF;
+  --c-nav-ink:     #17171A;  /* wordmark                                 */
+  --c-nav-soft:    #55555C;  /* nav links at rest                        */
+  --c-nav-accent:  #8A6742;  /* nav hover — the accent, darkened for white */
+  --c-nav-line:    #DEDCD8;  /* the rule under the bar                   */
   --c-scrim:       rgba(11, 11, 12, 0.72); /* over-image text backing   */
 
   /* --- type ------------------------------------------------------------- */
+  /* The wordmark is brand, not typography — it gets its own face so it can
+     change without disturbing every heading on the site. */
+  --f-wordmark: "Fraunces", "Instrument Serif", Georgia, serif;
   --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
   --f-body:    "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 

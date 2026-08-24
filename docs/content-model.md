@@ -54,7 +54,6 @@ request to make the site warmer, more personal, or easier to find.
 | `image`       | no       | Relative path to the file beside this one.              |
 | `order`       | no       | Lower comes first in the gallery. Defaults to 50.       |
 | `place`       | no       | General area only. See the privacy rules.               |
-| `span`        | no       | `large` gives the photograph a 2x2 tile in the mosaic.  |
 | `published`   | no       | `false` keeps it out of the built site entirely.        |
 
 ## Titles and alt text are different things
@@ -70,17 +69,25 @@ So: title it however he likes, and always write an `alt` that describes what's
 there. If `alt` is missing the site falls back to the title, which builds fine
 but leaves that person with nothing useful — so don't skip it.
 
-## Changing the photograph at the top of the home page
+## The photograph at the top of the home page
 
-One line. Open `src/data/site.json` and change `heroPhoto` to the filename of
-any photograph in `src/content/photos/`, without the `.md`:
+Two lines in `src/data/site.json`:
 
 ```
 "heroPhoto": "bald-eagle-in-flight",
+"heroPosition": "center 32%",
 ```
 
-Nothing else to touch. If the name doesn't match a real photograph the build
-fails with a message saying so, rather than shipping a blank banner.
+`heroPhoto` is the filename of any photograph in `src/content/photos/`,
+without the `.md`. If it doesn't match a real photograph the build fails with
+a message saying so, rather than shipping a blank banner.
+
+`heroPosition` decides which part of the photograph stays visible. The banner
+is much wider than the photograph is tall, so something has to be cropped.
+**A lower percentage shows more of the top of the photograph, which pushes the
+subject further down the frame.** `center 50%` is dead centre; `center 32%`
+sits the eagle lower than centre. Nudge it in steps of about 5% until it looks
+right.
 
 ## The home page bands
 

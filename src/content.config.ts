@@ -33,8 +33,6 @@ const photos = defineCollection({
       order: z.number().default(50),
       /** Optional, and general only — never a precise location. */
       place: z.string().optional(),
-      /** 'large' photographs take a 2x2 tile in the gallery mosaic. */
-      span: z.enum(['normal', 'large']).default('normal'),
       published: z.boolean().default(true),
     }),
 });

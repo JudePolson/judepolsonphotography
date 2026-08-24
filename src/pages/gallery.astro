@@ -23,7 +23,6 @@ const photos = (await getCollection('photos', (p) => p.data.published)).sort(
         description: p.data.description,
         image: p.data.image,
         place: p.data.place,
-        span: p.data.span,
       }))}
     />
   </section>
