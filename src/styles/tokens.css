@@ -32,6 +32,9 @@
   --c-scrim:       rgba(11, 11, 12, 0.72); /* over-image text backing   */
 
   /* --- type ------------------------------------------------------------- */
+  /* The wordmark is brand, not typography — it gets its own face so it can
+     change without disturbing every heading on the site. */
+  --f-wordmark: "Fraunces", "Instrument Serif", Georgia, serif;
   --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
   --f-body:    "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 

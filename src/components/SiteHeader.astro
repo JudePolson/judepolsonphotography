@@ -44,9 +44,11 @@ const path = Astro.url.pathname;
   }
 
   .wordmark {
-    font-family: var(--f-display);
+    font-family: var(--f-wordmark);
+    font-optical-sizing: auto;
+    font-weight: 600;
     font-size: clamp(var(--t-1), 2.6vw, var(--t-2));
-    letter-spacing: var(--tr-tight);
+    letter-spacing: -0.015em;
     color: var(--c-nav-ink);
   }
 

@@ -3,6 +3,7 @@ import { getCollection, getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
 import StoryBand from '../components/StoryBand.astro';
+import GalleryLink from '../components/GalleryLink.astro';
 import site from '../data/site.json';
 
 // One photograph at the top. Change which one in src/data/site.json → heroPhoto.
@@ -56,23 +57,6 @@ const rendered = await Promise.all(
     }
   </div>
 
-  <section class="cta">
-    <a href="/gallery">See the whole gallery &rarr;</a>
-  </section>
+  <GalleryLink />
 </Base>
 
-<style>
-  .cta {
-    border-top: 1px solid var(--c-hairline);
-    padding: var(--s-8) var(--gutter);
-    text-align: center;
-  }
-
-  .cta a {
-    font-family: var(--f-display);
-    font-size: clamp(var(--t-2), 3.6vw, var(--t-3));
-    letter-spacing: var(--tr-tight);
-  }
-
-  .cta a:hover { color: var(--c-accent); }
-</style>

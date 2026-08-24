@@ -26,7 +26,7 @@ which reads as a gallery label above the work rather than part of it.
 | ------ | --------------------------------------------------------------------- |
 | Color  | `--c-ground` `--c-surface` `--c-surface-2` `--c-ink` `--c-ink-soft` `--c-ink-faint` `--c-hairline` `--c-accent` `--c-scrim` |
 | Nav    | `--c-nav-bg` `--c-nav-ink` `--c-nav-soft` `--c-nav-accent` `--c-nav-line` — the white bar only |
-| Type   | `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
+| Type   | `--f-wordmark` (Fraunces) `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
 | Space  | `--s-1` → `--s-9`, 4px base                                           |
 | Layout | `--w-prose` `--w-page` `--gutter`                                     |
 | Motion | `--ease` `--dur` `--dur-cross`                                        |
@@ -43,14 +43,19 @@ restraint breaks.
 | `SiteFooter.astro`   | every page         | Copyright and inquiry link.                          |
 | `HeroBanner.astro`   | home               | One photograph as a banner across the top, no text over it. Which photograph and how it's framed are `heroPhoto` and `heroPosition` in `src/data/site.json`. |
 | `StoryBand.astro`    | home               | Half photograph, half writing. Alternates sides.     |
+| `GalleryLink.astro`  | home               | The link at the foot of the home page. On click, a flock of nine simple white birds lifts off and the gallery loads about a second later. Decorative and `aria-hidden`; the layer never blocks clicks, and anyone who prefers reduced motion goes straight through with no animation. |
 | `PhotoGallery.astro` | gallery            | Column layout that preserves every photograph's native aspect ratio — nothing is cropped to fit a tile. Click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
 
 Check this table before building anything new — the thing you want may exist.
 
 ## Type
 
-Instrument Serif for the wordmark and headings; Instrument Sans for everything
-else. Uppercase labels get `--tr-wide` letter-spacing and nothing else does.
+Fraunces for the wordmark, Instrument Serif for headings, Instrument Sans for
+everything else.
+
+The wordmark has its own token (`--f-wordmark`) on purpose: it's brand rather
+than typography, so it can be changed without disturbing a single heading on
+the site. Change that one line to try a different face. Uppercase labels get `--tr-wide` letter-spacing and nothing else does.
 Running text stays inside `--w-prose`.
 
 ## Accessibility floor
