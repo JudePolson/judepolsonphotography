@@ -51,7 +51,7 @@ request to make the site warmer, more personal, or easier to find.
 | `title`       | yes      | What you call the photograph. Shown in the lightbox.    |
 | `alt`         | no       | What is actually *visible*, for people who can't see it. See below. |
 | `description` | yes      | The paragraph beside the photograph in the lightbox.    |
-| `image`       | no       | Relative path to the file beside this one.              |
+| `image`       | **yes**  | Relative path to the file beside this one. If this line goes missing the build fails and names the file — it used to publish a grey box with the title in it instead. |
 | `order`       | no       | Lower comes first in the gallery. Defaults to 50.       |
 | `place`       | no       | General area only. See the privacy rules.               |
 | `published`   | no       | `false` keeps it out of the built site entirely.        |
@@ -92,31 +92,26 @@ banner; that's the trade for never losing part of the picture.
 side, writing on the other. They alternate sides automatically, so `order`
 controls sequence, not side. Delete a file to remove a band.
 
-Each band names **several** photographs, and the film strip fades slowly
-between them:
+Each band names one photograph, shown on a strip of film:
 
 ```
 ---
 title: "What I photograph"
-photos:
-  - grouse-displaying
-  - rufous-hummingbird
-  - black-oystercatcher
-  - gull-lifting-off
+photo: black-oystercatcher
 edgeCode: "KODAK 400TX"
 order: 10
 published: true
 ---
 ```
 
-`photos` are filenames from `src/content/photos/`, without the `.md` — the
-images aren't copied, just referenced, so a photograph can appear in the
-gallery and on a strip at once. Name one and it simply doesn't fade.
+`photo` is a filename from `src/content/photos/`, without the `.md` — the
+image isn't copied, just referenced, so a photograph can appear in the gallery
+and on a strip at once.
 
 `edgeCode` is the small orange marking along the top edge of the strip.
 Anything short works — a film stock, a date, a place.
 
-If a name doesn't match a real photograph the build fails and says which
+If the name doesn't match a real photograph the build fails and says which
 story and which name, rather than shipping an empty frame.
 
 ## Standing pages

@@ -2,25 +2,21 @@
 import FilmStrip from './FilmStrip.astro';
 import type { ImageMetadata } from 'astro';
 
-interface Frame {
-  image: ImageMetadata;
-  alt: string;
-}
-
 interface Props {
   title: string;
-  frames: Frame[];
+  image: ImageMetadata;
+  alt: string;
   edgeCode?: string;
   /** Odd-numbered bands put the film strip on the right instead. */
   flip?: boolean;
 }
 
-const { title, frames, edgeCode, flip = false } = Astro.props;
+const { title, image, alt, edgeCode, flip = false } = Astro.props;
 ---
 
 <section class:list={['band', { flip }]}>
   <div class="pane pane-film">
-    <FilmStrip frames={frames} edgeCode={edgeCode} />
+    <FilmStrip image={image} alt={alt} edgeCode={edgeCode} />
   </div>
 
   <div class="pane pane-text">
