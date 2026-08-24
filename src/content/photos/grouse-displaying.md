@@ -1,6 +1,6 @@
 ---
-title: "A grouse displaying on a burned log, neck sac inflated and tail fanned"
-description: "Full display — tail up and fanned, the red sac on the neck puffed out, the orange comb above the eye showing. He was standing on a burned log in the pine needles."
+title: Full color
+description: A dusky grouse displayed in hopes of attracting a female. Photo taken in the Methow Valley
 image: ./grouse-displaying.jpg
 order: 60
 featured: false
