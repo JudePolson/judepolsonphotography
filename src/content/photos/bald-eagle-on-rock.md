@@ -1,6 +1,6 @@
 ---
-title: "A bald eagle standing on a barnacle-covered rock at low tide"
-description: "Low tide, so the barnacles were showing. The forest behind went soft enough that the white head is the first thing you see."
+title: 
+description: A bald eagle sat on its rock perch looking out over the calm seal filled water of the Beardslee Islands in Glacier Bay National Park. Photo taken from my kayak.
 image: ./bald-eagle-on-rock.jpg
 order: 80
 featured: false
