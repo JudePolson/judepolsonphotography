@@ -38,7 +38,7 @@ const rendered = await Promise.all(
   <HeroBanner
     image={hero.data.image}
     alt={hero.data.alt ?? hero.data.title}
-    tagline={site.tagline}
+    position={site.heroPosition}
   />
 
   <div id="stories">

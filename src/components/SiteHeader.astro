@@ -25,9 +25,11 @@ const path = Astro.url.pathname;
 
 <style>
   .site-header {
+    background: var(--c-nav-bg);
+    color: var(--c-nav-ink);
     padding-inline: var(--gutter);
     padding-block: var(--s-5);
-    border-bottom: 1px solid var(--c-hairline);
+    border-bottom: 1px solid var(--c-nav-line);
   }
 
 
@@ -45,7 +47,7 @@ const path = Astro.url.pathname;
     font-family: var(--f-display);
     font-size: clamp(var(--t-1), 2.6vw, var(--t-2));
     letter-spacing: var(--tr-tight);
-    color: var(--c-ink);
+    color: var(--c-nav-ink);
   }
 
   nav ul {
@@ -58,10 +60,15 @@ const path = Astro.url.pathname;
     font-size: var(--t--1);
     letter-spacing: var(--tr-wide);
     text-transform: uppercase;
-    color: var(--c-ink-soft);
+    color: var(--c-nav-soft);
   }
 
   nav a { transition: color var(--dur) var(--ease); }
   nav a:hover,
-  nav a[aria-current='page'] { color: var(--c-accent); }
+  nav a[aria-current='page'] { color: var(--c-nav-accent); }
+
+  .site-header :global(a:focus-visible) {
+    outline: 2px solid var(--c-nav-accent);
+    outline-offset: 3px;
+  }
 </style>
