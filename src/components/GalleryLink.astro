@@ -19,8 +19,8 @@
   const zone = document.querySelector<HTMLElement>('[data-flock-zone]');
 
   if (zone && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const BIRDS = 11;
-    const FLIGHT = 2600;
+    const BIRDS = 17;
+    const FLIGHT = 3400;
 
     // Bird seen from behind: two tapered wings in a wide, shallow V.
     const BIRD_SVG = `
@@ -47,6 +47,8 @@
       for (let i = 0; i < BIRDS; i++) {
         const bird = document.createElement('span');
         bird.className = 'bird';
+        const inner = document.createElement('span');
+        inner.className = 'bird-y';
         const t = i / (BIRDS - 1);
 
         // Lift off from near the left end of the words, loosely scattered.
@@ -57,18 +59,25 @@
         const driftX = -(240 + t * 420 + ((i * 43) % 140));
         const riseY = -(300 + t * 240 + ((i * 61) % 200));
 
-        bird.style.setProperty('--x0', `${startX}px`);
-        bird.style.setProperty('--y0', `${startY}px`);
+        // Startled flocks don't leave together — they go up in a ragged wave,
+        // a few first and the rest tumbling after.
+        const burst = i < 4 ? i * 40 : 150 + ((i * 137) % 620);
+
+        bird.style.left = `${startX}px`;
+        bird.style.top = `${startY}px`;
         bird.style.setProperty('--dx', `${driftX}px`);
         bird.style.setProperty('--dy', `${riseY}px`);
-        bird.style.setProperty('--s', `${0.55 + ((i * 17) % 12) / 15}`);
-        bird.style.setProperty('--rot', `${-6 - ((i * 11) % 14)}deg`);
-        bird.style.setProperty('--d', `${(i * 105) % 900}ms`);
-        bird.style.setProperty('--flap', `${230 + ((i * 37) % 130)}ms`);
+        bird.style.setProperty('--s', `${0.5 + ((i * 17) % 14) / 15}`);
+        bird.style.setProperty('--d', `${burst}ms`);
+        // Wingbeat: quick and deep, and never quite in time with its neighbours.
+        bird.style.setProperty('--flap', `${165 + ((i * 43) % 85)}ms`);
+        bird.style.setProperty('--bank', `${1500 + ((i * 211) % 900)}ms`);
+        bird.style.setProperty('--tilt', `${-4 - ((i * 13) % 12)}deg`);
         // Each bird holds its wings a little differently, as in a real flock.
-        bird.style.setProperty('--wb', `${-10 + ((i * 29) % 22)}`);
+        bird.style.setProperty('--wb', `${-9 + ((i * 29) % 20)}`);
 
-        bird.innerHTML = BIRD_SVG;
+        inner.innerHTML = BIRD_SVG;
+        bird.appendChild(inner);
         layer.appendChild(bird);
       }
 
@@ -103,12 +112,45 @@
 
   .flock-layer .bird {
     position: absolute;
-    left: 0;
-    top: 0;
-    color: #fff;
     opacity: 0;
-    animation: bird-away 2500ms cubic-bezier(0.3, 0, 0.32, 1) var(--d) forwards;
+    /* X eases out hard: the startled burst, then coasting */
+    animation:
+      fly-x 3200ms cubic-bezier(0.07, 0.72, 0.28, 1) var(--d) forwards,
+      bird-fade 3200ms linear var(--d) forwards;
     will-change: transform, opacity;
+  }
+
+  /* Y is a separate element on a different curve — that mismatch is what
+     bends the flight into an arc instead of a straight diagonal. */
+  .flock-layer .bird-y {
+    display: block;
+    color: #fff;
+    animation:
+      fly-y 3200ms cubic-bezier(0.22, 0.5, 0.3, 1) var(--d) forwards,
+      bank var(--bank) ease-in-out var(--d) infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes fly-x {
+    from { transform: translate3d(0, 0, 0) scale(var(--s)); }
+    to   { transform: translate3d(var(--dx), 0, 0) scale(calc(var(--s) * 0.88)); }
+  }
+
+  @keyframes fly-y {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(0, var(--dy), 0); }
+  }
+
+  @keyframes bank {
+    from { rotate: var(--tilt); }
+    to   { rotate: calc(var(--tilt) - 9deg); }
+  }
+
+  @keyframes bird-fade {
+    0%   { opacity: 0; }
+    6%   { opacity: 1; }
+    72%  { opacity: 1; }
+    100% { opacity: 0; }
   }
 
   /* Wings pivot at the shoulder, in the SVG's own coordinate space. */
@@ -118,43 +160,20 @@
   }
 
   .flock-layer .bird .wl {
-    animation: flap-l var(--flap) ease-in-out infinite alternate;
+    animation: flap-l var(--flap) cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
   }
   .flock-layer .bird .wr {
-    animation: flap-r var(--flap) ease-in-out infinite alternate;
+    animation: flap-r var(--flap) cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
   }
 
+  /* A deep beat — pigeons clatter, they don't flutter politely. */
   @keyframes flap-l {
-    from { transform: rotate(calc((var(--wb) - 12) * 1deg)); }
-    to   { transform: rotate(calc((var(--wb) + 12) * 1deg)); }
+    from { transform: rotate(calc((var(--wb) - 26) * 1deg)); }
+    to   { transform: rotate(calc((var(--wb) + 24) * 1deg)); }
   }
   @keyframes flap-r {
-    from { transform: rotate(calc((var(--wb) - 12) * -1deg)); }
-    to   { transform: rotate(calc((var(--wb) + 12) * -1deg)); }
-  }
-
-  @keyframes bird-away {
-    0% {
-      opacity: 0;
-      transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--rot)) scale(calc(var(--s) * 0.8));
-    }
-    10% { opacity: 1; }
-    45% {
-      transform: translate3d(
-        calc(var(--x0) + var(--dx) * 0.36),
-        calc(var(--y0) + var(--dy) * 0.44),
-        0
-      ) rotate(calc(var(--rot) - 4deg)) scale(var(--s));
-    }
-    78% { opacity: 1; }
-    100% {
-      opacity: 0;
-      transform: translate3d(
-        calc(var(--x0) + var(--dx)),
-        calc(var(--y0) + var(--dy)),
-        0
-      ) rotate(calc(var(--rot) - 9deg)) scale(calc(var(--s) * 0.92));
-    }
+    from { transform: rotate(calc((var(--wb) - 26) * -1deg)); }
+    to   { transform: rotate(calc((var(--wb) + 24) * -1deg)); }
   }
 
   @media (prefers-reduced-motion: reduce) {

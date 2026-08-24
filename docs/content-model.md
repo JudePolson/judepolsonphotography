@@ -71,23 +71,20 @@ but leaves that person with nothing useful — so don't skip it.
 
 ## The photograph at the top of the home page
 
-Two lines in `src/data/site.json`:
+One line in `src/data/site.json`:
 
 ```
 "heroPhoto": "bald-eagle-in-flight",
-"heroPosition": "center 32%",
 ```
 
-`heroPhoto` is the filename of any photograph in `src/content/photos/`,
-without the `.md`. If it doesn't match a real photograph the build fails with
-a message saying so, rather than shipping a blank banner.
+That's the filename of any photograph in `src/content/photos/`, without the
+`.md`. If it doesn't match a real photograph the build fails with a message
+saying so, rather than shipping a blank banner.
 
-`heroPosition` decides which part of the photograph stays visible. The banner
-is much wider than the photograph is tall, so something has to be cropped.
-**A lower percentage shows more of the top of the photograph, which pushes the
-subject further down the frame.** `center 50%` is dead centre; `center 32%`
-sits the eagle lower than centre. Nudge it in steps of about 5% until it looks
-right.
+**The banner shows the whole photograph.** It takes its shape from the
+photograph's own proportions, so nothing is ever cropped — no wingtips cut off
+on a phone, no heads cut off on a wide monitor. A tall photograph makes a tall
+banner; that's the trade for never losing part of the picture.
 
 ## The home page bands
 
