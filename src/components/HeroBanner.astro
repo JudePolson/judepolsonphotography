@@ -23,8 +23,9 @@ const ratio = image ? `${image.width} / ${image.height}` : '16 / 9';
       <Image
         src={image}
         alt={alt}
-        widths={[800, 1400, 2000, 2600]}
+        widths={[900, 1400, 1900, 2400, 2730]}
         sizes="100vw"
+        quality={90}
         loading="eager"
         fetchpriority="high"
       />
