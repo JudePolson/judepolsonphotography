@@ -24,31 +24,30 @@ const byId = new Map(allPhotos.map((p) => [p.id, p]));
 
 const rendered = await Promise.all(
   stories.map(async (story) => {
-    const photo = byId.get(story.data.photo);
-    if (!photo) {
-      throw new Error(
-        `Story "${story.id}" points at photo "${story.data.photo}", which doesn't exist in src/content/photos/.`
-      );
-    }
-    return { story, photo, Content: (await render(story)).Content };
+    const frames = story.data.photos.map((id) => {
+      const photo = byId.get(id);
+      if (!photo || !photo.data.image) {
+        throw new Error(
+          `Story "${story.id}" lists photo "${id}", which doesn't exist in src/content/photos/ (or has no image yet).`
+        );
+      }
+      return { image: photo.data.image, alt: photo.data.alt ?? photo.data.title };
+    });
+    return { story, frames, Content: (await render(story)).Content };
   })
 );
 ---
 
 <Base isHome>
-  <HeroBanner
-    image={hero.data.image}
-    alt={hero.data.alt ?? hero.data.title}
-    position={site.heroPosition}
-  />
+  <HeroBanner image={hero.data.image} alt={hero.data.alt ?? hero.data.title} />
 
   <div id="stories">
     {
-      rendered.map(({ story, photo, Content }, i) => (
+      rendered.map(({ story, frames, Content }, i) => (
         <StoryBand
           title={story.data.title}
-          image={photo.data.image}
-          imageAlt={photo.data.alt ?? photo.data.title}
+          frames={frames}
+          edgeCode={story.data.edgeCode}
           flip={i % 2 === 1}
         >
           <Content />

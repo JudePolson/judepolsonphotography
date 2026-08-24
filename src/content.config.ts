@@ -46,10 +46,13 @@ const stories = defineCollection({
   schema: z.object({
     title: z.string(),
     /**
-     * Which photograph to show beside this writing — the filename of an entry
-     * in src/content/photos/, without the .md. No need to copy the image.
+     * Which photographs to show beside this writing — filenames of entries in
+     * src/content/photos/, without the .md. The film strip fades between
+     * them. No need to copy the image files.
      */
-    photo: z.string(),
+    photos: z.array(z.string()).min(1),
+    /** The little orange code along the top edge of the film strip. */
+    edgeCode: z.string().optional(),
     order: z.number().default(50),
     published: z.boolean().default(true),
   }),

@@ -71,29 +71,53 @@ but leaves that person with nothing useful — so don't skip it.
 
 ## The photograph at the top of the home page
 
-Two lines in `src/data/site.json`:
+One line in `src/data/site.json`:
 
 ```
 "heroPhoto": "bald-eagle-in-flight",
-"heroPosition": "center 32%",
 ```
 
-`heroPhoto` is the filename of any photograph in `src/content/photos/`,
-without the `.md`. If it doesn't match a real photograph the build fails with
-a message saying so, rather than shipping a blank banner.
+That's the filename of any photograph in `src/content/photos/`, without the
+`.md`. If it doesn't match a real photograph the build fails with a message
+saying so, rather than shipping a blank banner.
 
-`heroPosition` decides which part of the photograph stays visible. The banner
-is much wider than the photograph is tall, so something has to be cropped.
-**A lower percentage shows more of the top of the photograph, which pushes the
-subject further down the frame.** `center 50%` is dead centre; `center 32%`
-sits the eagle lower than centre. Nudge it in steps of about 5% until it looks
-right.
+**The banner shows the whole photograph.** It takes its shape from the
+photograph's own proportions, so nothing is ever cropped — no wingtips cut off
+on a phone, no heads cut off on a wide monitor. A tall photograph makes a tall
+banner; that's the trade for never losing part of the picture.
 
 ## The home page bands
 
-`src/content/stories/*.md` — each file is one band: a photograph on half the
-screen, writing on the other. They alternate sides automatically, so `order`
+`src/content/stories/*.md` — each file is one band: a strip of film on one
+side, writing on the other. They alternate sides automatically, so `order`
 controls sequence, not side. Delete a file to remove a band.
+
+Each band names **several** photographs, and the film strip fades slowly
+between them:
+
+```
+---
+title: "What I photograph"
+photos:
+  - grouse-displaying
+  - rufous-hummingbird
+  - black-oystercatcher
+  - gull-lifting-off
+edgeCode: "KODAK 400TX"
+order: 10
+published: true
+---
+```
+
+`photos` are filenames from `src/content/photos/`, without the `.md` — the
+images aren't copied, just referenced, so a photograph can appear in the
+gallery and on a strip at once. Name one and it simply doesn't fade.
+
+`edgeCode` is the small orange marking along the top edge of the strip.
+Anything short works — a film stock, a date, a place.
+
+If a name doesn't match a real photograph the build fails and says which
+story and which name, rather than shipping an empty frame.
 
 ## Standing pages
 
