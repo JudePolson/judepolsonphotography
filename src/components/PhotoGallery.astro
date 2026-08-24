@@ -7,7 +7,9 @@ interface Photo {
   title: string;
   alt: string;
   description: string;
-  image?: ImageMetadata;
+  image: ImageMetadata;
+  /** A large rendition, used when the photograph is opened. */
+  full: string;
   place?: string;
 }
 
@@ -34,17 +36,13 @@ const { photos } = Astro.props;
               data-index={i}
               aria-label={`View ${photo.title} larger`}
             >
-              {photo.image ? (
-                <Image
-                  src={photo.image}
-                  alt={photo.alt}
-                  widths={[400, 700, 1000]}
-                  sizes="(max-width: 40rem) 92vw, (max-width: 70rem) 45vw, 30vw"
-                  loading={i < 6 ? 'eager' : 'lazy'}
-                />
-              ) : (
-                <span class="ph label">{photo.title}</span>
-              )}
+              <Image
+                src={photo.image}
+                alt={photo.alt}
+                widths={[400, 700, 1000]}
+                sizes="(max-width: 40rem) 92vw, (max-width: 70rem) 45vw, 30vw"
+                loading={i < 6 ? 'eager' : 'lazy'}
+              />
             </button>
           </li>
         ))}
@@ -85,28 +83,11 @@ const { photos } = Astro.props;
     const countEl = dialog.querySelector('.lb-count');
     let current = 0;
 
-    // Full-size sources, harvested from what Astro emitted for each thumbnail.
-    const sources = thumbs.map((btn) => {
-      const img = btn.querySelector('img');
-      if (!img) return null;
-      const set = img.getAttribute('srcset');
-      if (!set) return img.getAttribute('src');
-      const last = set.split(',').pop();
-      return last ? last.trim().split(/\s+/)[0] : img.getAttribute('src');
-    });
-
     function show(i) {
       current = (i + photos.length) % photos.length;
       const p = photos[current];
-      const src = sources[current];
-      if (src) {
-        imgEl.setAttribute('src', src);
-        imgEl.setAttribute('alt', p.alt);
-        imgEl.style.display = '';
-      } else {
-        imgEl.removeAttribute('src');
-        imgEl.style.display = 'none';
-      }
+      imgEl.setAttribute('src', p.full);
+      imgEl.setAttribute('alt', p.alt);
       titleEl.textContent = p.title;
       placeEl.textContent = p.place || '';
       placeEl.style.display = p.place ? '' : 'none';

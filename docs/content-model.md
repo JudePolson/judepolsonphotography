@@ -51,7 +51,7 @@ request to make the site warmer, more personal, or easier to find.
 | `title`       | yes      | What you call the photograph. Shown in the lightbox.    |
 | `alt`         | no       | What is actually *visible*, for people who can't see it. See below. |
 | `description` | yes      | The paragraph beside the photograph in the lightbox.    |
-| `image`       | no       | Relative path to the file beside this one.              |
+| `image`       | **yes**  | Relative path to the file beside this one. If this line goes missing the build fails and names the file — it used to publish a grey box with the title in it instead. |
 | `order`       | no       | Lower comes first in the gallery. Defaults to 50.       |
 | `place`       | no       | General area only. See the privacy rules.               |
 | `published`   | no       | `false` keeps it out of the built site entirely.        |

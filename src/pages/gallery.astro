@@ -1,10 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PhotoGallery from '../components/PhotoGallery.astro';
 
 const photos = (await getCollection('photos', (p) => p.data.published)).sort(
   (a, b) => a.data.order - b.data.order
+);
+
+/**
+ * The lightbox used to reuse the largest thumbnail, which topped out at
+ * 1000px and looked soft once blown up. Render a proper large version for it.
+ */
+const fullSizes = await Promise.all(
+  photos.map((p) => getImage({ src: p.data.image, width: 2000, format: 'webp', quality: 82 }))
 );
 ---
 
@@ -16,12 +25,13 @@ const photos = (await getCollection('photos', (p) => p.data.published)).sort(
 
   <section class="shell body">
     <PhotoGallery
-      photos={photos.map((p) => ({
+      photos={photos.map((p, i) => ({
         id: p.id,
         title: p.data.title,
         alt: p.data.alt ?? p.data.title,
         description: p.data.description,
         image: p.data.image,
+        full: fullSizes[i].src,
         place: p.data.place,
       }))}
     />

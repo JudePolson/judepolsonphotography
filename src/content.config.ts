@@ -27,8 +27,12 @@ const photos = defineCollection({
       alt: z.string().optional(),
       /** Shown beside the photograph in the lightbox. A few sentences. */
       description: z.string(),
-      /** Optional until the photograph itself is added. */
-      image: image().optional(),
+      /**
+       * Required. If this line goes missing the build fails loudly, naming
+       * the file — rather than quietly publishing a grey box with the title
+       * written in it, which is what used to happen.
+       */
+      image: image(),
       /** Lower numbers come first in the gallery. */
       order: z.number().default(50),
       /** Optional, and general only — never a precise location. */

@@ -12,7 +12,7 @@
 ---
 
 <section class="cta" data-flock-zone>
-  <a href="/gallery/" class="gallery-link">See the whole gallery &rarr;</a>
+  <a href="/gallery/" class="gallery-link"><span data-launch>See</span> the whole gallery &rarr;</a>
 </section>
 
 <script>
@@ -20,7 +20,11 @@
 
   if (zone && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const BIRDS = 17;
-    const FLIGHT = 3400;
+    const RISE = 3000;   // how long one bird's flight lasts
+    const SPREAD = 620;  // the ragged wave of takeoffs
+    // The layer must outlive the very last bird, or the slowest ones get cut
+    // off mid-air and it looks like they stopped and started again.
+    const FLIGHT = RISE + SPREAD + 400;
 
     // Bird seen from behind: two tapered wings in a wide, shallow V.
     const BIRD_SVG = `
@@ -41,8 +45,9 @@
       layer.className = 'flock-layer';
       layer.setAttribute('aria-hidden', 'true');
 
-      const link = zone.querySelector('a');
-      const anchor = link ? link.getBoundingClientRect() : rect;
+      // They come up off the word "See", not the middle of the line.
+      const word = zone.querySelector('[data-launch]');
+      const anchor = (word || zone.querySelector('a') || zone).getBoundingClientRect();
 
       for (let i = 0; i < BIRDS; i++) {
         const bird = document.createElement('span');
@@ -51,17 +56,18 @@
         inner.className = 'bird-y';
         const t = i / (BIRDS - 1);
 
-        // Lift off from near the left end of the words, loosely scattered.
-        const startX = anchor.left + anchor.width * 0.18 + ((i * 37) % 90) - 45;
-        const startY = anchor.top + anchor.height * 0.5 + ((i * 53) % 64) - 32;
+        // Clustered just right of the word, scattered a little.
+        const startX = anchor.right + 6 + ((i * 37) % 70) - 22;
+        const startY = anchor.top + anchor.height * 0.5 + ((i * 53) % 46) - 23;
 
-        // Up and away to the left, fanning as they go.
-        const driftX = -(240 + t * 420 + ((i * 43) % 140));
-        const riseY = -(300 + t * 240 + ((i * 61) % 200));
+        // Mostly straight up, the way a startled flock leaves a square,
+        // drifting left as they climb rather than flying sideways.
+        const driftX = -(110 + t * 250 + ((i * 43) % 110));
+        const riseY = -(430 + t * 380 + ((i * 61) % 240));
 
         // Startled flocks don't leave together — they go up in a ragged wave,
         // a few first and the rest tumbling after.
-        const burst = i < 4 ? i * 40 : 150 + ((i * 137) % 620);
+        const burst = i < 4 ? i * 35 : 120 + ((i * 137) % SPREAD);
 
         bird.style.left = `${startX}px`;
         bird.style.top = `${startY}px`;
@@ -69,8 +75,9 @@
         bird.style.setProperty('--dy', `${riseY}px`);
         bird.style.setProperty('--s', `${0.5 + ((i * 17) % 14) / 15}`);
         bird.style.setProperty('--d', `${burst}ms`);
-        // Wingbeat: quick and deep, and never quite in time with its neighbours.
-        bird.style.setProperty('--flap', `${165 + ((i * 43) % 85)}ms`);
+        bird.style.setProperty('--rise', `${RISE}ms`);
+        // Wingbeat: fast and clattering, never quite in time with its neighbours.
+        bird.style.setProperty('--flap', `${95 + ((i * 43) % 55)}ms`);
         bird.style.setProperty('--bank', `${1500 + ((i * 211) % 900)}ms`);
         bird.style.setProperty('--tilt', `${-4 - ((i * 13) % 12)}deg`);
         // Each bird holds its wings a little differently, as in a real flock.
@@ -85,13 +92,16 @@
       window.setTimeout(() => layer.remove(), FLIGHT);
     }
 
-    // Fires once the section is properly in view — not the moment it peeks in.
+    // Once per page load, the first time the section is properly in view —
+    // not the moment it peeks over the edge. Then it stops watching, so it
+    // never fires a second flock over the top of the first.
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) launch();
-          // Re-arm once it's fully out of view, so it can happen again later.
-          if (!entry.isIntersecting) flying = false;
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            launch();
+            io.disconnect();
+          }
         }
       },
       { threshold: [0, 0.6] }
@@ -115,8 +125,8 @@
     opacity: 0;
     /* X eases out hard: the startled burst, then coasting */
     animation:
-      fly-x 3200ms cubic-bezier(0.07, 0.72, 0.28, 1) var(--d) forwards,
-      bird-fade 3200ms linear var(--d) forwards;
+      fly-x var(--rise) cubic-bezier(0.10, 0.68, 0.30, 1) var(--d) forwards,
+      bird-fade var(--rise) linear var(--d) forwards;
     will-change: transform, opacity;
   }
 
@@ -126,7 +136,7 @@
     display: block;
     color: #fff;
     animation:
-      fly-y 3200ms cubic-bezier(0.22, 0.5, 0.3, 1) var(--d) forwards,
+      fly-y var(--rise) cubic-bezier(0.18, 0.55, 0.32, 1) var(--d) forwards,
       bank var(--bank) ease-in-out var(--d) infinite alternate;
     will-change: transform;
   }
