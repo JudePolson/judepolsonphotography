@@ -88,9 +88,36 @@ banner; that's the trade for never losing part of the picture.
 
 ## The home page bands
 
-`src/content/stories/*.md` — each file is one band: a photograph on half the
-screen, writing on the other. They alternate sides automatically, so `order`
+`src/content/stories/*.md` — each file is one band: a strip of film on one
+side, writing on the other. They alternate sides automatically, so `order`
 controls sequence, not side. Delete a file to remove a band.
+
+Each band names **several** photographs, and the film strip fades slowly
+between them:
+
+```
+---
+title: "What I photograph"
+photos:
+  - grouse-displaying
+  - rufous-hummingbird
+  - black-oystercatcher
+  - gull-lifting-off
+edgeCode: "KODAK 400TX"
+order: 10
+published: true
+---
+```
+
+`photos` are filenames from `src/content/photos/`, without the `.md` — the
+images aren't copied, just referenced, so a photograph can appear in the
+gallery and on a strip at once. Name one and it simply doesn't fade.
+
+`edgeCode` is the small orange marking along the top edge of the strip.
+Anything short works — a film stock, a date, a place.
+
+If a name doesn't match a real photograph the build fails and says which
+story and which name, rather than shipping an empty frame.
 
 ## Standing pages
 

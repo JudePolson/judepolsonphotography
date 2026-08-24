@@ -1,6 +1,11 @@
 ---
 title: "What I photograph"
-photo: grouse-displaying
+photos:
+  - grouse-displaying
+  - rufous-hummingbird
+  - black-oystercatcher
+  - gull-lifting-off
+edgeCode: "KODAK 400TX"
 order: 10
 published: true
 ---
