@@ -31,6 +31,7 @@ request to make the site warmer, more personal, or easier to find.
    ```
    ---
    title: "Great Blue Heron"
+   alt: "A great blue heron standing motionless in shallow water at dawn"
    description: "The story behind the photograph, in Jude's words. Two or
      three sentences. This is what appears next to the big version."
    image: ./great-blue-heron.jpg
@@ -47,21 +48,39 @@ request to make the site warmer, more personal, or easier to find.
 
 | Field         | Required | What it does                                            |
 | ------------- | -------- | ------------------------------------------------------- |
-| `title`       | yes      | Shown in the lightbox and used as the image's alt text. |
+| `title`       | yes      | What you call the photograph. Shown in the lightbox.    |
+| `alt`         | no       | What is actually *visible*, for people who can't see it. See below. |
 | `description` | yes      | The paragraph beside the photograph in the lightbox.    |
 | `image`       | no       | Relative path to the file beside this one.              |
 | `order`       | no       | Lower comes first in the gallery. Defaults to 50.       |
-| `featured`    | no       | `true` puts it in the rotating hero on the home page.   |
-| `heroOrder`   | no       | Position in the hero rotation. Lower goes first.        |
 | `place`       | no       | General area only. See the privacy rules.               |
 | `span`        | no       | `large` gives the photograph a 2x2 tile in the mosaic.  |
 | `published`   | no       | `false` keeps it out of the built site entirely.        |
 
-## Changing the hero photographs
+## Titles and alt text are different things
 
-Jude wanted these easy to swap. Set `featured: true` on the photographs he
-wants and `featured: false` on the ones he doesn't. The home page takes the
-first five by `heroOrder`. Nothing else to touch.
+`title` is what Jude calls the photograph. Good titles are short and his own —
+"Leap of faith", "Wing check", "Taking a stroll".
+
+`alt` is what is *in* the picture, written for someone who cannot see it: a
+person using a screen reader, or anyone whose connection dropped the image.
+"Wing check" is an excellent title and tells that person nothing.
+
+So: title it however he likes, and always write an `alt` that describes what's
+there. If `alt` is missing the site falls back to the title, which builds fine
+but leaves that person with nothing useful — so don't skip it.
+
+## Changing the photograph at the top of the home page
+
+One line. Open `src/data/site.json` and change `heroPhoto` to the filename of
+any photograph in `src/content/photos/`, without the `.md`:
+
+```
+"heroPhoto": "bald-eagle-in-flight",
+```
+
+Nothing else to touch. If the name doesn't match a real photograph the build
+fails with a message saying so, rather than shipping a blank banner.
 
 ## The home page bands
 

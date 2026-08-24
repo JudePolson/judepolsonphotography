@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   // Update this once the domain is attached in Cloudflare.
-  site: 'https://judepolsonphotography.com',
+  site: 'https://judepolson.com',
   output: 'static',
   build: { format: 'directory' },
   integrations: [sitemap()],

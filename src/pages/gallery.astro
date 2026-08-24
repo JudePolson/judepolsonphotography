@@ -19,6 +19,7 @@ const photos = (await getCollection('photos', (p) => p.data.published)).sort(
       photos={photos.map((p) => ({
         id: p.id,
         title: p.data.title,
+        alt: p.data.alt ?? p.data.title,
         description: p.data.description,
         image: p.data.image,
         place: p.data.place,

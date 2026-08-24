@@ -5,6 +5,7 @@ import type { ImageMetadata } from 'astro';
 interface Photo {
   id: string;
   title: string;
+  alt: string;
   description: string;
   image?: ImageMetadata;
   place?: string;
@@ -37,7 +38,7 @@ const { photos } = Astro.props;
               {photo.image ? (
                 <Image
                   src={photo.image}
-                  alt={photo.title}
+                  alt={photo.alt}
                   widths={[320, 560, 880]}
                   sizes="(max-width: 600px) 45vw, (max-width: 1100px) 30vw, 22vw"
                   loading={i < 8 ? 'eager' : 'lazy'}
@@ -101,7 +102,7 @@ const { photos } = Astro.props;
       const src = sources[current];
       if (src) {
         imgEl.setAttribute('src', src);
-        imgEl.setAttribute('alt', p.title);
+        imgEl.setAttribute('alt', p.alt);
         imgEl.style.display = '';
       } else {
         imgEl.removeAttribute('src');

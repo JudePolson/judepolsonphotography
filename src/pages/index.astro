@@ -1,14 +1,17 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import HeroSlideshow from '../components/HeroSlideshow.astro';
+import HeroBanner from '../components/HeroBanner.astro';
 import StoryBand from '../components/StoryBand.astro';
 import site from '../data/site.json';
 
-// Up to five featured photographs rotate through the hero.
-const featured = (await getCollection('photos', (p) => p.data.published && p.data.featured))
-  .sort((a, b) => a.data.heroOrder - b.data.heroOrder)
-  .slice(0, 5);
+// One photograph at the top. Change which one in src/data/site.json → heroPhoto.
+const hero = await getEntry('photos', site.heroPhoto);
+if (!hero) {
+  throw new Error(
+    `src/data/site.json names heroPhoto "${site.heroPhoto}", which doesn't exist in src/content/photos/.`
+  );
+}
 
 const stories = (await getCollection('stories', (s) => s.data.published)).sort(
   (a, b) => a.data.order - b.data.order
@@ -31,9 +34,10 @@ const rendered = await Promise.all(
 );
 ---
 
-<Base isHome overlayHeader>
-  <HeroSlideshow
-    slides={featured.map((p) => ({ image: p.data.image, title: p.data.title }))}
+<Base isHome>
+  <HeroBanner
+    image={hero.data.image}
+    alt={hero.data.alt ?? hero.data.title}
     tagline={site.tagline}
   />
 
@@ -43,7 +47,7 @@ const rendered = await Promise.all(
         <StoryBand
           title={story.data.title}
           image={photo.data.image}
-          imageAlt={photo.data.title}
+          imageAlt={photo.data.alt ?? photo.data.title}
           flip={i % 2 === 1}
         >
           <Content />

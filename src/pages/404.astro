@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found" description="That page doesn't exist.">
+  <section class="shell wrap">
+    <h1>That page doesn&rsquo;t exist</h1>
+    <div class="prose">
+      <p>
+        The link may be old, or slightly mistyped. The
+        <a href="/gallery">gallery</a> is probably what you were after.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .wrap { padding-block: var(--s-9) var(--s-8); }
+  .prose { margin-top: var(--s-5); color: var(--c-ink-soft); }
+</style>
