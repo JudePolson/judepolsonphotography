@@ -20,6 +20,8 @@
 
   if (zone && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const BIRDS = 17;
+    const BIRD_W = 62;
+    const BIRD_H = 26;
     const RISE = 3000;   // how long one bird's flight lasts
     const SPREAD = 620;  // the ragged wave of takeoffs
     // The layer must outlive the very last bird, or the slowest ones get cut
@@ -56,14 +58,23 @@
         inner.className = 'bird-y';
         const t = i / (BIRDS - 1);
 
-        // Clustered just right of the word, scattered a little.
-        const startX = anchor.right + 6 + ((i * 37) % 70) - 22;
-        const startY = anchor.top + anchor.height * 0.5 + ((i * 53) % 46) - 23;
+        // Size is set as a real width rather than a transform. A scale() on
+        // the parent would also scale the child's translation, so the small
+        // birds would travel proportionally less far and stall mid-screen.
+        const scale = 0.5 + ((i * 17) % 14) / 15;
+        const w = Math.round(BIRD_W * scale);
+        const h = Math.round(BIRD_H * scale);
 
-        // Mostly straight up, the way a startled flock leaves a square,
-        // drifting left as they climb rather than flying sideways.
-        const driftX = -(110 + t * 250 + ((i * 43) % 110));
-        const riseY = -(430 + t * 380 + ((i * 61) % 240));
+        // A tight knot right on the word "See". `left`/`top` place a bird's
+        // top-left corner, so pull back by half its size to sit the bird
+        // itself on the word rather than hanging down and to the right of it.
+        const startX = anchor.right - w / 2 + (((i * 37) % 26) - 13);
+        const startY = anchor.top + anchor.height / 2 - h / 2 + (((i * 53) % 22) - 11);
+
+        // Every bird must clear the top of the window under its own steam —
+        // no fading out partway. Distance is measured from where it starts.
+        const riseY = -(startY + h + 140 + ((i * 61) % 260));
+        const driftX = -(70 + t * 260 + ((i * 43) % 120));
 
         // Startled flocks don't leave together — they go up in a ragged wave,
         // a few first and the rest tumbling after.
@@ -73,7 +84,7 @@
         bird.style.top = `${startY}px`;
         bird.style.setProperty('--dx', `${driftX}px`);
         bird.style.setProperty('--dy', `${riseY}px`);
-        bird.style.setProperty('--s', `${0.5 + ((i * 17) % 14) / 15}`);
+        bird.style.setProperty('--w', `${w}px`);
         bird.style.setProperty('--d', `${burst}ms`);
         bird.style.setProperty('--rise', `${RISE}ms`);
         // Wingbeat: fast and clattering, never quite in time with its neighbours.
@@ -126,7 +137,7 @@
     /* X eases out hard: the startled burst, then coasting */
     animation:
       fly-x var(--rise) cubic-bezier(0.10, 0.68, 0.30, 1) var(--d) forwards,
-      bird-fade var(--rise) linear var(--d) forwards;
+      bird-in 90ms linear var(--d) forwards;
     will-change: transform, opacity;
   }
 
@@ -142,8 +153,8 @@
   }
 
   @keyframes fly-x {
-    from { transform: translate3d(0, 0, 0) scale(var(--s)); }
-    to   { transform: translate3d(var(--dx), 0, 0) scale(calc(var(--s) * 0.88)); }
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(var(--dx), 0, 0); }
   }
 
   @keyframes fly-y {
@@ -156,14 +167,20 @@
     to   { rotate: calc(var(--tilt) - 9deg); }
   }
 
-  @keyframes bird-fade {
-    0%   { opacity: 0; }
-    6%   { opacity: 1; }
-    72%  { opacity: 1; }
-    100% { opacity: 0; }
+  /* Only a fade in, so they don't pop into being. They exit by flying off
+     the top of the window, never by dissolving. */
+  @keyframes bird-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
   /* Wings pivot at the shoulder, in the SVG's own coordinate space. */
+  .flock-layer .bird svg {
+    display: block;
+    width: var(--w);
+    height: auto;
+  }
+
   .flock-layer .bird .wing {
     transform-box: view-box;
     transform-origin: 40px 25px;
