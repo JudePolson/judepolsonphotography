@@ -1,16 +1,10 @@
 ---
 import site from '../data/site.json';
 
-interface Props {
-  /** Over-image headers sit transparently on top of the hero. */
-  overlay?: boolean;
-}
-
-const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 ---
 
-<header class:list={['site-header', { overlay }]}>
+<header class="site-header">
   <div class="inner">
     <a class="wordmark" href="/">{site.wordmark}</a>
     <nav aria-label="Main">
@@ -36,15 +30,6 @@ const path = Astro.url.pathname;
     border-bottom: 1px solid var(--c-hairline);
   }
 
-  /* Sits on top of the hero photographs rather than above them. */
-  .site-header.overlay {
-    position: absolute;
-    inset: 0 0 auto 0;
-    z-index: 3;
-    border-bottom: none;
-    background: linear-gradient(to bottom, rgba(11, 11, 12, 0.55), transparent);
-    padding-bottom: var(--s-7);
-  }
 
   .inner {
     max-width: var(--w-page);

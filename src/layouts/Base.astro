@@ -9,16 +9,9 @@ interface Props {
   description?: string;
   /** Set true on the home page so the <title> isn't "Home — Jude Polson". */
   isHome?: boolean;
-  /** Home page only: let the header sit transparently over the hero. */
-  overlayHeader?: boolean;
 }
 
-const {
-  title,
-  description = site.description,
-  isHome = false,
-  overlayHeader = false,
-} = Astro.props;
+const { title, description = site.description, isHome = false } = Astro.props;
 const pageTitle = isHome || !title ? site.name : `${title} — ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com');
 ---
@@ -46,9 +39,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com
     />
   </head>
 
-  <body class:list={{ 'has-overlay-header': overlayHeader }}>
+  <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <SiteHeader overlay={overlayHeader} />
+    <SiteHeader />
     <main id="main">
       <slot />
     </main>

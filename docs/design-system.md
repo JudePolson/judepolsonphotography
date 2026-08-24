@@ -35,9 +35,9 @@ restraint breaks.
 
 | Component            | Used by            | What it does                                        |
 | -------------------- | ------------------ | --------------------------------------------------- |
-| `SiteHeader.astro`   | every page         | Wordmark top-left, nav top-right. `overlay` makes it sit transparently over the hero. |
+| `SiteHeader.astro`   | every page         | Wordmark top-left, nav top-right.                    |
 | `SiteFooter.astro`   | every page         | Copyright and inquiry link.                          |
-| `HeroSlideshow.astro`| home               | Crossfades up to five featured photographs, 5.2s each. Holds on the first frame if the visitor prefers reduced motion. |
+| `HeroBanner.astro`   | home               | One photograph as a banner across the top, with the tagline over it. Which photograph is set by `heroPhoto` in `src/data/site.json`. |
 | `StoryBand.astro`    | home               | Half photograph, half writing. Alternates sides.     |
 | `PhotoGallery.astro` | gallery            | Square thumbnail mosaic (a `large` photo takes a 2x2 tile); click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
 
@@ -51,8 +51,9 @@ Running text stays inside `--w-prose`.
 
 ## Accessibility floor
 
-Every photograph needs real alt text — `title` supplies it, so titles have to
-describe, not just name. Focus is always visible. The lightbox is a real
+Every photograph needs real alt text. That's the `alt` field, which is
+separate from `title` precisely so Jude can title his work the way a
+photographer does without stranding anyone using a screen reader. Focus is always visible. The lightbox is a real
 `<dialog>`, so Escape and Tab behave. `prefers-reduced-motion` stops the hero
 rotating.
 

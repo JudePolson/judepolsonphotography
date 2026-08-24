@@ -16,17 +16,21 @@ const photos = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/photos' }),
   schema: ({ image }) =>
     z.object({
+      /** What Jude calls the photograph. Shown in the lightbox. */
       title: z.string(),
+      /**
+       * What is actually visible, for people using a screen reader and for
+       * when an image fails to load. A title like "Wing check" is a good
+       * title and useless as alt text, which is why these are separate.
+       * Falls back to the title if absent.
+       */
+      alt: z.string().optional(),
       /** Shown beside the photograph in the lightbox. A few sentences. */
       description: z.string(),
       /** Optional until the photograph itself is added. */
       image: image().optional(),
       /** Lower numbers come first in the gallery. */
       order: z.number().default(50),
-      /** true = this photograph joins the rotating hero on the home page. */
-      featured: z.boolean().default(false),
-      /** Where it lands in the hero rotation. Lower goes first. */
-      heroOrder: z.number().default(50),
       /** Optional, and general only — never a precise location. */
       place: z.string().optional(),
       /** 'large' photographs take a 2x2 tile in the gallery mosaic. */
