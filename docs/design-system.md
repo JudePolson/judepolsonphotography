@@ -43,7 +43,7 @@ restraint breaks.
 | `SiteFooter.astro`   | every page         | Copyright and inquiry link.                          |
 | `HeroBanner.astro`   | home               | One photograph as a banner across the top, no text over it. Which photograph and how it's framed are `heroPhoto` and `heroPosition` in `src/data/site.json`. |
 | `StoryBand.astro`    | home               | Half photograph, half writing. Alternates sides.     |
-| `GalleryLink.astro`  | home               | The link at the foot of the home page. On click, eight sketched white birds — body, head, swept wings, flapping — flutter up and away to the left from the left end of the words, and the gallery loads about a second later. Decorative and `aria-hidden`; the layer never blocks clicks, and anyone who prefers reduced motion goes straight through with no animation. |
+| `GalleryLink.astro`  | home               | The link at the foot of the home page. **On scroll, not on click** — when the section comes properly into view (60% visible), eleven sketched birds lift off and flutter up and away to the left. Seen from behind: two tapered wings in a wide, shallow V, each bird holding its wings a little differently. Decorative and `aria-hidden`; the layer is `pointer-events: none`, the link navigates normally with no delay, and nothing happens at all under reduced motion. Re-arms once the section leaves the viewport. |
 | `PhotoGallery.astro` | gallery            | Column layout that preserves every photograph's native aspect ratio — nothing is cropped to fit a tile. Click opens a `<dialog>` lightbox with the photograph and its description beside it. Arrow keys and Escape work. |
 
 Check this table before building anything new — the thing you want may exist.
