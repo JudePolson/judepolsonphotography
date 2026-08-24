@@ -1,6 +1,6 @@
 ---
-title: "A black oystercatcher walking on a cobble beach in the rain"
-description: "Raining, so the light was flat and even. The bill and the eye ring are the only colour on the whole bird."
+title: Taking a stroll
+description: A black oystercatcher walked along a rocky beach in a rainstorm. Photo taken in Reid inlet, next to Reid Glacier in Glacier Bay National Park.
 image: ./black-oystercatcher.jpg
 order: 50
 featured: true
