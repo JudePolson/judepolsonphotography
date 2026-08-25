@@ -26,7 +26,7 @@ which reads as a gallery label above the work rather than part of it.
 | ------ | --------------------------------------------------------------------- |
 | Color  | `--c-ground` `--c-surface` `--c-surface-2` `--c-ink` `--c-ink-soft` `--c-ink-faint` `--c-hairline` `--c-accent` `--c-scrim` |
 | Nav    | `--c-nav-bg` `--c-nav-ink` `--c-nav-soft` `--c-nav-accent` `--c-nav-line` — the white bar only |
-| Type   | `--f-wordmark` (Fraunces) `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5` |
+| Type   | `--f-wordmark` (Fraunces) `--f-display` (Instrument Serif) `--f-body` (Instrument Sans), scale `--t--1` → `--t-5`, plus `--t--05` (a half-step used by the nav) |
 | Space  | `--s-1` → `--s-9`, 4px base                                           |
 | Layout | `--w-prose` `--w-page` `--gutter`                                     |
 | Motion | `--ease` `--dur` `--dur-cross`                                        |
