@@ -6,8 +6,4 @@ order: 10
 published: true
 ---
 
-DRAFT — Jude, replace this with your own words.
-
-Mostly birds. I like the ones that are hard to get close to, which is most of
-them. I shoot with a Canon and a long lens, and I spend a lot more time
-waiting than actually taking pictures.
+I photograph all kinds of wildlife, birds and mammals alike, on the ocean and on land. I love being able to capture action shots of the animal doing something interesting. A good day photographing wildlife is being able to capture photos, and simply watch the wildlife do its thing.

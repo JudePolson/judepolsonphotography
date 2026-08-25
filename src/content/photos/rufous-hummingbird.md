@@ -1,9 +1,8 @@
 ---
 title: "A rufous hummingbird hovering, wings blurred, tail fanned"
 alt: "A rufous hummingbird hovering against a soft green background, wings blurred and tail fanned"
-description: "Hovering, with the tail fanned and the wings blurred into a fan of their own. The green flecks on the head only show up in the right light."
+description: This photo of a rufous humming bird was captured just outside my house. The photo shows the wings and tail slightly out of focus while the rest of the body is crisp. I like the way this photo turned out because it shows how much motion there is to keep the hummingbird still.
 image: ./rufous-hummingbird.jpg
 order: 20
 place: "Washington"
-# Jude — confirm the species. Rufous is my read from the colour and tail tips.
 ---
